@@ -1,3 +1,12 @@
+
+My\ project/[Ll]ibrary/
+My\ project/[Tt]emp/
+My\ project/[Oo]bj/
+My\ project/[Bb]uild/
+My\ project/[Ll]ogs/
+My\ project/[Uu]ser[Ss]ettings/
+
+
 # This .gitignore file should be placed at the root of your Unity project directory
 #
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
