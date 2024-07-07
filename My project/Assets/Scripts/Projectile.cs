@@ -5,6 +5,7 @@ using UnityEngine;
 using Mirror;
 using UnityEngine.InputSystem;
 using Unity.VisualScripting;
+using Unity.Mathematics;
 
 public class Projectile : MonoBehaviour
 {
@@ -20,6 +21,11 @@ public class Projectile : MonoBehaviour
     [SerializeField] private TrailRenderer trailRenderer;
     [SerializeField] private GameObject meshes;
 
+    private Vector3 camForward;
+    private PlayerItems items;
+
+    private int pierceCount = 0;
+
     private void Awake() 
     {
         projectileCol.enabled = false;
@@ -33,32 +39,55 @@ public class Projectile : MonoBehaviour
         StartCoroutine(SelfDestruct(timeToDestroy));
     }
 
-    public void SetProjectileData(float dam, float spa, bool grav)
+    public void SetProjectileData(float dam, float spa, bool grav, Vector3 trueDirection, PlayerItems itemData)
     {
         damage = dam;
         spawnForce = spa;
         rb.useGravity = grav;
+        items = itemData;
+        camForward = trueDirection;
     }
 
-    private void OnCollisionEnter(Collision co) 
+    private void OnTriggerEnter(Collider co) 
     {
-        if (isLocalPlayer) // deal damage locally
+        CheckDamage(co);
+
+        CheckPiercing(co);
+    }
+
+    private void CheckDamage(Collider co) {
+        if (co.transform.root.gameObject.layer == 8) // enemy layer
         {
-            if (co.transform.root.gameObject.layer == 8) // enemy layer
-            {
+            if (isLocalPlayer) {
                 if (co.transform.tag == "HitBox") // enemy hitbox
                 {
                     co.transform.root.GetComponent<Enemy>().TakeDamage(owner, damage);
                 }
-                else
-                {
-                    return; // avoid enemy locomotion collider
-                }
             }
-        }
+        } 
+    }
+
+    private void CheckPiercing(Collider co) {
+
+
+        if (co.transform.root.gameObject.layer == 8) // enemy layer
+        {
+            pierceCount++;
+            rb.velocity = Vector3.zero;
+            rb.AddForce(camForward * spawnForce);
+            //Debug.Log(pierceCount);
+        } 
         
+        if (pierceCount > items.penetrators) {
+            StopAllCoroutines();
+            StartCoroutine(DestroyProjectile());
+        }
+    }
+
+    private void OnCollisionEnter(Collision co) {
+        // Debug.Log(co.gameObject.name);
         StopAllCoroutines();
-        StartCoroutine(DestroyProjectile());
+        StartCoroutine(DestroyProjectile());        
     }
 
     private IEnumerator SelfDestruct(float time) 

@@ -147,6 +147,7 @@ GameObject:
   - component: {fileID: 6853916084350182532}
   - component: {fileID: 1571082773056580736}
   - component: {fileID: 6558938766302377665}
+  - component: {fileID: 8124803250207652490}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -418,6 +419,7 @@ MonoBehaviour:
   syncInterval: 0
   health: 100
   points: 0
+  velocity: {x: 0, y: 0, z: 0}
 --- !u!114 &799899785482761702
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -489,6 +491,19 @@ MonoBehaviour:
   useCameraForward: 0
   dashCooldown: 2
   dashDuration: 0.2
+--- !u!114 &8124803250207652490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3178099549325785341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 361536f48b7538f4dab3d06bc6951b94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  penetrators: 1
 --- !u!1 &4670978447204931409
 GameObject:
   m_ObjectHideFlags: 0

@@ -50,6 +50,8 @@ public class EnemyWalking : NetworkBehaviour
 
     private void LookAtTarget()
     {
+        if (enemy.target == null) { return; }
+
         if (enemy.currentState == EnemyState.Chase)
         {
             head.LookAt(enemy.target.transform.position);

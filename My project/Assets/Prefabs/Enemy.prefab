@@ -320,7 +320,7 @@ MonoBehaviour:
     type: 3}
   damage: 5
   spawnForce: 100
-  shootCooldown: 2
+  shootCooldown: 15
   magSize: 2
   fireRate: 0.2
   attackRange: 15
