@@ -23,11 +23,14 @@ public class PlayerShoot : NetworkBehaviour
     // for testing
     public bool canShoot = false;
 
+    private PlayerItems items;
+
     void Start()
     {
         cam = GameObject.FindGameObjectWithTag("MainCamera").transform;
         vfxStart = cam.GetComponent<CameraSetup>().vfxStart;
         col = GetComponent<Collider>();
+        items = GetComponent<PlayerItems>();
     }
 
     // RUNS ONLY ON LOCAL CLIENT
@@ -53,6 +56,7 @@ public class PlayerShoot : NetworkBehaviour
     [ClientCallback] 
     private void Shoot() 
     {
+
         RaycastHit hit;
         Vector3 pos = vfxStart.position;
         Quaternion rot = vfxStart.rotation;
@@ -62,40 +66,41 @@ public class PlayerShoot : NetworkBehaviour
             didHit = true;
         }
 
-        CmdShoot(hit.point, didHit, pos, rot);
-        DoShoot(hit.point, didHit, pos, rot);
+        CmdShoot(hit.point, didHit, pos, rot, cam.forward);
+        DoShoot(hit.point, didHit, pos, rot, cam.forward);
     }
 
     // RUNS ONLY ON SERVER (HOST TECHNICALLY)
     [Command] 
-    void CmdShoot(Vector3 hit, bool didHit, Vector3 pos, Quaternion rot)
+    void CmdShoot(Vector3 hit, bool didHit, Vector3 pos, Quaternion rot, Vector3 cameraForward)
     {
-        RpcShoot(hit, didHit, pos, rot);
+        RpcShoot(hit, didHit, pos, rot, cameraForward);
     }
 
     // RUNS ONLY ON REMOTE CLIENT
     [ClientRpc(includeOwner = false)]
-    void RpcShoot(Vector3 hit, bool didHit, Vector3 pos, Quaternion rot) 
+    void RpcShoot(Vector3 hit, bool didHit, Vector3 pos, Quaternion rot, Vector3 cameraForward) 
     {
         if (!isLocalPlayer) // just in case
         {
-            DoShoot(hit, didHit, pos, rot);
+            DoShoot(hit, didHit, pos, rot, cameraForward);
         }
     }
 
-    void DoShoot(Vector3 hit, bool didHit, Vector3 pos, Quaternion rot)
+    void DoShoot(Vector3 hit, bool didHit, Vector3 pos, Quaternion rot, Vector3 cameraForward)
     {
+        Quaternion newRot = rot;
         if (didHit) 
         {
-            rot = Quaternion.LookRotation(hit - pos, Vector3.up);
+            newRot = Quaternion.LookRotation(hit - pos, Vector3.up);
         }
         
         // Do visual effect of the shot
-        GameObject vfx = Instantiate(projectilePrefab, pos, rot);
+        GameObject vfx = Instantiate(projectilePrefab, pos, newRot);
         Projectile projectile = vfx.GetComponent<Projectile>();
         projectile.playerCol = col;
         projectile.owner = GetComponent<PlayerSetup>();
         projectile.isLocalPlayer = isLocalPlayer;
-        projectile.SetProjectileData(damage, spawnForce, gravity);
+        projectile.SetProjectileData(damage, spawnForce, gravity, cameraForward, items);
     }
 }
