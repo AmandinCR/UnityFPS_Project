@@ -391,17 +391,21 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  projectilePrefab: {fileID: 3463209286390618529, guid: a6412f4ed6066bd42ab7df7bf4c95bb6,
-    type: 3}
+  hitScan: 0
   aimLayerMask:
     serializedVersion: 2
     m_Bits: 449
   damage: 20
-  spawnForce: 300
-  gravity: 0
   maxRaycastDistance: 100
   shotCooldown: 0.5
   canShoot: 0
+  projectilePrefab: {fileID: 3463209286390618529, guid: a6412f4ed6066bd42ab7df7bf4c95bb6,
+    type: 3}
+  spawnForce: 300
+  gravity: 0
+  hitScanTrail: {fileID: 6576671293168497084, guid: 3eeb33f022d035548ac471433b37037c,
+    type: 3}
+  bulletSpeed: 20
 --- !u!114 &671693539564229515
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -503,7 +507,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 361536f48b7538f4dab3d06bc6951b94, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  penetrators: 1
+  penetrators: 3
+  exploders: 0
 --- !u!1 &4670978447204931409
 GameObject:
   m_ObjectHideFlags: 0

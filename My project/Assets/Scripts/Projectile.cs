@@ -51,11 +51,11 @@ public class Projectile : MonoBehaviour
     private void OnTriggerEnter(Collider co) 
     {
         CheckDamage(co);
-
         CheckPiercing(co);
     }
 
-    private void CheckDamage(Collider co) {
+    private void CheckDamage(Collider co) 
+    {
         if (co.transform.root.gameObject.layer == 8) // enemy layer
         {
             if (isLocalPlayer) {
@@ -67,9 +67,8 @@ public class Projectile : MonoBehaviour
         } 
     }
 
-    private void CheckPiercing(Collider co) {
-
-
+    private void CheckPiercing(Collider co) 
+    {
         if (co.transform.root.gameObject.layer == 8) // enemy layer
         {
             pierceCount++;
@@ -84,7 +83,8 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter(Collision co) {
+    private void OnCollisionEnter(Collision co) 
+    {
         // Debug.Log(co.gameObject.name);
         StopAllCoroutines();
         StartCoroutine(DestroyProjectile());        
@@ -100,7 +100,7 @@ public class Projectile : MonoBehaviour
     {
         rb.velocity = Vector3.zero;
         meshes.SetActive(false);
-        yield return new WaitForSeconds(2 * trailRenderer.time);
+        yield return new WaitForSeconds(trailRenderer.time);
         Destroy(this.gameObject);
     }
 }
