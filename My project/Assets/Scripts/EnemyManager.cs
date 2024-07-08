@@ -14,6 +14,12 @@ public class EnemyManager : NetworkBehaviour
     [SerializeField] private int spawnWaves = 1;
     private int spawnedWavesCount = 0;
     private float spawnTimer = 0f;
+    private CameraSetup cam;
+
+    private void Start()
+    {
+        cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraSetup>();
+    }
 
     [ServerCallback]
     private void Update()
@@ -57,6 +63,7 @@ public class EnemyManager : NetworkBehaviour
             GameObject enemy = Instantiate(enemyPrefab);
             enemy.transform.position = spawningTransforms[j].position;
             enemy.GetComponent<Enemy>().enemyManager = this;
+            enemy.GetComponent<Enemy>().SetupHealthBar(cam.canvas, cam.GetComponent<Camera>());
             NetworkServer.Spawn(enemy);
         }
     }

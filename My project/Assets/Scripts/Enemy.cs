@@ -6,18 +6,21 @@ using UnityEngine;
 
 public class Enemy : NetworkBehaviour
 {
-    public float health = 100f;
-    public float pointWorth = 1;
-    public GameObject target;
+    [SerializeField] private ProgressBar healthBar;
+    [SerializeField] private float maxHealth = 100f;
+    private float health = 100f;
+    [SerializeField] private float pointWorth = 1;
+    [HideInInspector] public GameObject target;
     public bool canSeeTarget = false;
     public EnemyState currentState;
-    public EnemyState initState = EnemyState.Idle;
-    public EnemyManager enemyManager;
+    [SerializeField] private EnemyState initState = EnemyState.Idle;
+    [HideInInspector] public EnemyManager enemyManager;
     public float playerHeight = 1f;
 
     private void Start() 
     {
         currentState = initState;
+        health = maxHealth;
     }
 
     public void ChangeState(EnemyState newState)
@@ -30,9 +33,17 @@ public class Enemy : NetworkBehaviour
         currentState = newState;
     }
 
+    public void SetupHealthBar(Canvas canvas, Camera cam)
+    {
+        healthBar.transform.SetParent(canvas.transform);
+        healthBar.GetComponent<FaceCamera>().Camera = cam;
+    }
+
     #region Damaged
     public void TakeDamage(PlayerSetup player, float damage) 
     {
+        if (health <= 0.0f) { return;}
+
         if (health - damage <= 0.0f) 
         {
             player.points += pointWorth;
@@ -45,11 +56,6 @@ public class Enemy : NetworkBehaviour
     {
         RemoveHealth(damage);
         RpcTakeDamage(damage);
-
-        if (health <= 0.0f) 
-        {
-            StartCoroutine(Die());
-        }
 
         // start chasing player if damaged
         ChangeState(EnemyState.Chase);
@@ -68,17 +74,23 @@ public class Enemy : NetworkBehaviour
     private void RemoveHealth(float damage)
     {
         health -= damage;
+        healthBar.SetProgress(health / maxHealth, 3);
+
+        if (health <= 0.0f) 
+        {
+            StartCoroutine(Die());
+        }
     }
 
     private IEnumerator Die() {
-        if (isServer) // just in case
+        Destroy(healthBar.gameObject);
+
+        if (isServer)
         {  
             yield return new WaitForSeconds(1f);
             enemyManager.enemiesAlive--;
             NetworkServer.Destroy(this.gameObject);
         }
     }
-
-
     #endregion
 }
