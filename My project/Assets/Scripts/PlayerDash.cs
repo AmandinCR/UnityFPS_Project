@@ -104,10 +104,12 @@ public class PlayerDash : NetworkBehaviour
     private IEnumerator DashEffects()
     {
         characterController.Gravity = Vector3.zero;
+        characterController.JumpUpSpeed = 0f;
 
         yield return new WaitForSeconds(dashDuration);
         
         // should not manually set this
+        characterController.JumpUpSpeed = 12f;
         characterController.Gravity = new Vector3(0,-20f,0);
     }
 }

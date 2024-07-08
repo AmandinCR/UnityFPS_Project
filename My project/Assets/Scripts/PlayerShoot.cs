@@ -8,7 +8,6 @@ using UnityEngine;
 
 public class PlayerShoot : NetworkBehaviour
 {
-    [SerializeField] private bool hitScan = false;
     [SerializeField] private LayerMask aimLayerMask;
     private Transform vfxStart;
     private Transform cam;
@@ -26,9 +25,14 @@ public class PlayerShoot : NetworkBehaviour
     [SerializeField] private bool gravity = false;
 
     [Header("HitScan")]
+    [SerializeField] private bool hitScan = false;
     [SerializeField] private TrailRenderer hitScanTrail;
-    [SerializeField] private float bulletSpeed = 1f;
     private int pierceCount = 0;
+    [SerializeField] private float hitScanTravelDelay;
+
+    [Header("Custom Projectile")]
+    [SerializeField] private bool custom = false;
+    [SerializeField] private GameObject customProjectilePrefab;
 
     void Start()
     {
@@ -84,7 +88,7 @@ public class PlayerShoot : NetworkBehaviour
             {
                 if (hit.transform.tag == "HitBox") // enemy hitbox
                 {
-                    OnHit(hit, pos, dir);
+                    OnEnemyHit(hit, pos, dir);
                 }
             }
         }
@@ -97,27 +101,32 @@ public class PlayerShoot : NetworkBehaviour
         DoHitScanShot(hit.point, vfxPos);
     }
 
-    private void OnHit(RaycastHit hit, Vector3 pos, Vector3 dir)
+    private void OnEnemyHit(RaycastHit hit, Vector3 pos, Vector3 dir)
+    {
+        StartCoroutine(FakeBulletTravel(hit, pos, dir));
+    }
+
+    private IEnumerator FakeBulletTravel(RaycastHit hit, Vector3 pos, Vector3 dir)
+    {
+        yield return new WaitForSeconds(hitScanTravelDelay);
+
+        // apply on hit effects
+        DealHitScanDamage(hit);
+        CheckPierce(hit.point, dir);
+    }
+    private void DealHitScanDamage(RaycastHit hit)
     {
         PlayerSetup owner = GetComponent<PlayerSetup>();
         hit.transform.root.GetComponent<Enemy>().TakeDamage(owner, damage);
-        float bulletDistance = (hit.point - pos).magnitude;
-        CheckPierce(hit.point, dir, bulletDistance);
     }
 
-    private void CheckPierce(Vector3 hit, Vector3 dir, float bulletDistance)
+    private void CheckPierce(Vector3 hit, Vector3 dir)
     {
         pierceCount++;
         if (pierceCount <= items.penetrators)
         {
-            StartCoroutine(FakeBulletRestart(hit, dir, bulletDistance));
+            HitScanShoot(hit, dir, hit);
         }
-    }
-
-    private IEnumerator FakeBulletRestart(Vector3 hit, Vector3 dir, float bulletDistance)
-    {
-        yield return new WaitForSeconds(bulletDistance / bulletSpeed);
-        HitScanShoot(hit, dir, hit);
     }
 
     // RUNS ONLY ON SERVER (HOST TECHNICALLY)
@@ -142,21 +151,22 @@ public class PlayerShoot : NetworkBehaviour
     {
         // Do visual effect of the shot
         TrailRenderer trail = Instantiate(hitScanTrail, vfxPos, Quaternion.identity);
-        StartCoroutine(SpawnTrail(trail, hit));
+        StartCoroutine(SpawnTrail(trail, vfxPos, hit));
     }
 
-    private IEnumerator SpawnTrail(TrailRenderer trail, Vector3 hit)
+    private IEnumerator SpawnTrail(TrailRenderer trail, Vector3 start, Vector3 end)
     {
-        Vector3 startPosition = trail.transform.position;
-        float distance = Vector3.Distance(trail.transform.position, hit);
-        float remainingDistance = distance;
-        while (remainingDistance > 0)
+        float timeToTravel = hitScanTravelDelay;
+        if ((start - end).magnitude < 5f)
         {
-            trail.transform.position = Vector3.Lerp(startPosition, hit, 1 - (remainingDistance / distance));
-            remainingDistance -= bulletSpeed * Time.deltaTime;
+            timeToTravel = timeToTravel / 2f;
+        }
+
+        for(float t = 0; t < 1; t += Time.deltaTime / timeToTravel)
+        {
+            trail.transform.position = Vector3.Lerp(start, end, t);
             yield return null;
         }
-        trail.transform.position = hit;
         Destroy(trail.gameObject, trail.time);
     }
     #endregion
@@ -196,13 +206,23 @@ public class PlayerShoot : NetworkBehaviour
     // RUNS ON ALL CLIENTS
     private void DoShoot(Vector3 pos, Quaternion rot, Vector3 cameraForward)
     {
-        // Do visual effect of the shot
-        GameObject vfx = Instantiate(projectilePrefab, pos, rot);
-        Projectile projectile = vfx.GetComponent<Projectile>();
-        projectile.playerCol = col;
-        projectile.owner = GetComponent<PlayerSetup>();
-        projectile.isLocalPlayer = isLocalPlayer;
-        projectile.SetProjectileData(damage, spawnForce, gravity, cameraForward, items);
+        if (custom)
+        {
+            GameObject vfx = Instantiate(customProjectilePrefab, pos, rot);
+            CustomProjectile projectile = vfx.GetComponent<CustomProjectile>();
+            projectile.isLocalPlayer = isLocalPlayer;
+            projectile.owner = GetComponent<PlayerSetup>();
+            projectile.SetProjectileData(damage, cameraForward, items);
+        }
+        else
+        {
+            GameObject vfx = Instantiate(projectilePrefab, pos, rot);
+            Projectile projectile = vfx.GetComponent<Projectile>();
+            projectile.playerCol = col;
+            projectile.owner = GetComponent<PlayerSetup>();
+            projectile.isLocalPlayer = isLocalPlayer;
+            projectile.SetProjectileData(damage, spawnForce, gravity, cameraForward, items);
+        }
     }
 
     #endregion

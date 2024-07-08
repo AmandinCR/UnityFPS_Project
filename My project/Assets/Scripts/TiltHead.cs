@@ -19,6 +19,9 @@ public class TiltHead : NetworkBehaviour
 
     private void Update() 
     {
-        head.transform.rotation = cam.rotation;
+        if (cam != null)
+        {
+            head.transform.rotation = cam.rotation;
+        }
     }
 }

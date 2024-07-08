@@ -48,7 +48,7 @@ public class Enemy : NetworkBehaviour
 
         if (health <= 0.0f) 
         {
-            Die();
+            StartCoroutine(Die());
         }
 
         // start chasing player if damaged
@@ -70,12 +70,15 @@ public class Enemy : NetworkBehaviour
         health -= damage;
     }
 
-    private void Die() {
+    private IEnumerator Die() {
         if (isServer) // just in case
         {  
+            yield return new WaitForSeconds(1f);
             enemyManager.enemiesAlive--;
             NetworkServer.Destroy(this.gameObject);
         }
     }
+
+
     #endregion
 }

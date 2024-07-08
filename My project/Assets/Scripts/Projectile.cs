@@ -58,7 +58,8 @@ public class Projectile : MonoBehaviour
     {
         if (co.transform.root.gameObject.layer == 8) // enemy layer
         {
-            if (isLocalPlayer) {
+            if (isLocalPlayer) 
+            {
                 if (co.transform.tag == "HitBox") // enemy hitbox
                 {
                     co.transform.root.GetComponent<Enemy>().TakeDamage(owner, damage);

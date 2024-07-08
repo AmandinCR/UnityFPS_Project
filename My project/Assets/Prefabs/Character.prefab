@@ -391,21 +391,24 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  hitScan: 0
   aimLayerMask:
     serializedVersion: 2
     m_Bits: 449
   damage: 20
-  maxRaycastDistance: 100
+  maxRaycastDistance: 50
   shotCooldown: 0.5
   canShoot: 0
   projectilePrefab: {fileID: 3463209286390618529, guid: a6412f4ed6066bd42ab7df7bf4c95bb6,
     type: 3}
-  spawnForce: 300
+  spawnForce: 500
   gravity: 0
+  hitScan: 0
   hitScanTrail: {fileID: 6576671293168497084, guid: 3eeb33f022d035548ac471433b37037c,
     type: 3}
-  bulletSpeed: 20
+  hitScanTravelDelay: 0.1
+  custom: 1
+  customProjectilePrefab: {fileID: 6149620952564726392, guid: 466956ec504a5004faed424dbd96d86f,
+    type: 3}
 --- !u!114 &671693539564229515
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -493,7 +496,7 @@ MonoBehaviour:
   airDashForce: 12
   dashUpwardForce: 0
   useCameraForward: 0
-  dashCooldown: 2
+  dashCooldown: 1
   dashDuration: 0.2
 --- !u!114 &8124803250207652490
 MonoBehaviour:
