@@ -101,14 +101,15 @@ public class CustomProjectile : MonoBehaviour
         if (hitSomething) {return;}
 
         // check in front of the bullet for collisions
-        float raycastDistance = bulletSpeed * Time.fixedDeltaTime;
+        float raycastDistance = 2 * bulletSpeed * Time.fixedDeltaTime;
+        float moveDistance = bulletSpeed * Time.fixedDeltaTime;
+        // check behind if we missed something
         if (Physics.Raycast(transform.position, transform.forward, out projectileHit, raycastDistance, raycastLayerMask))
         {
             hitSomething = true;
-            OnHit();
         }
 
-        // move projectile in update/fixedupdate
+        // move projectile in update or fixedupdate
         if (fixedUpdateVisual)
         {
             if (hitSomething)
@@ -117,7 +118,7 @@ public class CustomProjectile : MonoBehaviour
             }
             else
             {
-                transform.position += transform.forward * raycastDistance;
+                transform.position += transform.forward * moveDistance;
             }
         }
         else
@@ -131,11 +132,15 @@ public class CustomProjectile : MonoBehaviour
             }
             else
             {
-                end = transform.position + transform.forward * raycastDistance;
+                end = transform.position + transform.forward * moveDistance;
             }
             
         }
         
+        if (hitSomething)
+        {
+            OnHit();
+        }
     }
 
     private void Update()

@@ -9902,7 +9902,7 @@ Transform:
   m_GameObject: {fileID: 6149620952564726392}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.034, y: 0, z: -0.074}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -10037,13 +10037,14 @@ MonoBehaviour:
   raycastLayerMask:
     serializedVersion: 2
     m_Bits: 257
-  fixedUpdateVisual: 0
+  fixedUpdateVisual: 1
   trailRenderer: {fileID: 3779459639168254664}
   meshes: {fileID: 3382899361405826207}
   selfDestructTime: 5
   bulletSpeed: 50
   isLocalPlayer: 0
   owner: {fileID: 0}
+  bulletPoint: {fileID: 0}
 --- !u!1 &8524692732264181716
 GameObject:
   m_ObjectHideFlags: 0

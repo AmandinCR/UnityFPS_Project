@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using KinematicCharacterController;
 using Mirror;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Enemy : NetworkBehaviour
 {
@@ -87,6 +88,7 @@ public class Enemy : NetworkBehaviour
 
         if (isServer)
         {  
+            GetComponent<EnemyWalking>().canMove = false;
             yield return new WaitForSeconds(1f);
             enemyManager.enemiesAlive--;
             NetworkServer.Destroy(this.gameObject);

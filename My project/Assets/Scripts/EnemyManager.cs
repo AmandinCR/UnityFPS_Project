@@ -60,8 +60,8 @@ public class EnemyManager : NetworkBehaviour
         for (int i=0; i<enemyCount; i++)
         {
             int j = i % spawningTransforms.Count;
-            GameObject enemy = Instantiate(enemyPrefab);
-            enemy.transform.position = spawningTransforms[j].position;
+            // can't move an agent unless his pathfinding is off
+            GameObject enemy = Instantiate(enemyPrefab, spawningTransforms[j].position, spawningTransforms[j].rotation);
             enemy.GetComponent<Enemy>().enemyManager = this;
             enemy.GetComponent<Enemy>().SetupHealthBar(cam.canvas, cam.GetComponent<Camera>());
             NetworkServer.Spawn(enemy);

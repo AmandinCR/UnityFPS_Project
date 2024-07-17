@@ -12,6 +12,7 @@ public class EnemyWalking : NetworkBehaviour
     [SerializeField] private Transform head;
     private float disengageTimer = 0f;
     private Enemy enemy;
+    public bool canMove = true;
 
     [ServerCallback]
     void Start()
@@ -26,10 +27,17 @@ public class EnemyWalking : NetworkBehaviour
     [ServerCallback]
     void FixedUpdate()
     {
-        CheckEngage();
-        CheckDisengage();
-
-        LookAtTarget();
+        if (canMove)
+        {
+            CheckEngage();
+            CheckDisengage();
+            LookAtTarget();
+        }
+        else
+        {
+            agent.isStopped = true;
+        }
+        
     }
 
     private void CheckEngage()
