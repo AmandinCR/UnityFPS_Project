@@ -148,6 +148,7 @@ GameObject:
   - component: {fileID: 1571082773056580736}
   - component: {fileID: 6558938766302377665}
   - component: {fileID: 8124803250207652490}
+  - component: {fileID: -775770431532290274}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -512,6 +513,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   penetrators: 3
   exploders: 0
+--- !u!114 &-775770431532290274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3178099549325785341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e54814c4f950a3f4db18a8cdd3019fe5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  velocityFOVChange: 8
+  fastFOV: 90
+  slowFOV: 70
+  fovTransitionSpeed: 0.4
 --- !u!1 &4670978447204931409
 GameObject:
   m_ObjectHideFlags: 0
