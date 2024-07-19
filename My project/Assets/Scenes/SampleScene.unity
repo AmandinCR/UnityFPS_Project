@@ -4177,6 +4177,7 @@ MonoBehaviour:
   vfxStart: {fileID: 1347655994}
   healthText: {fileID: 1049191942}
   canvas: {fileID: 359279505}
+  playerCam: {fileID: 1245654877}
 --- !u!1 &1267955012
 GameObject:
   m_ObjectHideFlags: 0
@@ -5306,7 +5307,7 @@ MonoBehaviour:
   syncInterval: 0
   enemyPrefab: {fileID: 550363922277451164, guid: 78a09a9b7883f2e45b948d68074a6450,
     type: 3}
-  enemyCount: 1
+  enemyCount: 3
   spawningTransforms:
   - {fileID: 1786476028}
   - {fileID: 215606843}
@@ -5315,8 +5316,6 @@ MonoBehaviour:
   enemiesAlive: 0
   spawnCooldown: 5
   spawnWaves: 3
-  canvas: {fileID: 0}
-  playerCam: {fileID: 0}
 --- !u!114 &1745114519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6418,7 +6417,7 @@ MonoBehaviour:
   syncInterval: 0
   enemyPrefab: {fileID: 4511201160075575705, guid: 3dcf62ddf03d7f74eb1ac9320cf5cd4a,
     type: 3}
-  enemyCount: 1
+  enemyCount: 3
   spawningTransforms:
   - {fileID: 8082020227291037525}
   - {fileID: 2004214772}
@@ -6427,8 +6426,6 @@ MonoBehaviour:
   enemiesAlive: 0
   spawnCooldown: 5
   spawnWaves: 3
-  canvas: {fileID: 0}
-  playerCam: {fileID: 0}
 --- !u!1 &2178175128136710666
 GameObject:
   m_ObjectHideFlags: 0

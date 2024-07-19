@@ -14,16 +14,6 @@ public class EnemyManager : NetworkBehaviour
     [SerializeField] private int spawnWaves = 1;
     private int spawnedWavesCount = 0;
     private float spawnTimer = 0f;
-    private CameraSetup cam;
-    public Canvas canvas;
-    public Camera playerCam;
-
-    private void Start()
-    {
-        cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraSetup>();
-        canvas = cam.canvas;
-        playerCam = cam.GetComponent<Camera>();
-    }
 
     [ServerCallback]
     private void Update()

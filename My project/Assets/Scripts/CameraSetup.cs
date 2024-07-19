@@ -8,4 +8,5 @@ public class CameraSetup : MonoBehaviour
     public Transform vfxStart;
     public TextMeshProUGUI healthText;
     public Canvas canvas;
+    public Camera playerCam;
 }

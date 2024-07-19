@@ -32,11 +32,13 @@ public class Enemy : NetworkBehaviour
         SetupHealthBar();
     }
 
+    [ServerCallback]
     public void ChangeState(EnemyState newState)
     {
         currentState = newState;
     }
 
+    [ServerCallback]
     public void ChangeAttackState(EnemyAttackState newState)
     {
         currentAttackState = newState;
@@ -44,8 +46,9 @@ public class Enemy : NetworkBehaviour
 
     private void SetupHealthBar()
     {
-        healthBar.GetComponent<FaceCamera>().cam = enemyManager.playerCam;
-        healthBar.transform.SetParent(enemyManager.canvas.transform);
+        CameraSetup mainCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraSetup>();
+        healthBar.GetComponent<FaceCamera>().cam = mainCam.playerCam;
+        healthBar.transform.SetParent(mainCam.canvas.transform);
     }
 
     #region Damaged
