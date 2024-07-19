@@ -102,15 +102,6 @@ public class EnemyWalking : NetworkBehaviour
         }
     }
 
-    private void Move()
-    {
-        // destination is set manually elsewhere to unless following player for optimization
-        if (followingPlayer)
-        {
-            agent.destination = enemy.target.transform.position;
-        }
-    }
-
 #region Dash
     private void CheckDash()
     {
@@ -136,39 +127,20 @@ public class EnemyWalking : NetworkBehaviour
         enemy.canMove = false;
         enemy.ChangeAttackState(EnemyAttackState.Dash);
         
-        //pick new position
-        // REPETITIVE CODE....
+        // pick new position
         Vector3 startingPosition = transform.position;
         Vector3 endPosition = transform.position;
         if (toPlayer)
         {
-            // get player position
-            Vector3 playerPos = enemy.target.transform.position + new Vector3(0,enemy.playerHeight,0);
-
-            // calculate new position near player
-            Vector3 newPoint = playerPos + Random.onUnitSphere * dashToPlayerShift; // should be change so that its on a unit circle instead? y=0?
-            Vector3 lineOfSight = newPoint - playerPos;
-            
-            // check we can see player from new position
-            if (!Physics.Raycast(playerPos, lineOfSight, lineOfSight.magnitude, walkLineOfSightMask))
-            {
-                endPosition = newPoint;
-            }
+            // should be change so that its on a unit circle instead? y=0?
+            endPosition = PickSpotNearPlayer(dashToPlayerShift);
         }
         else
         {
-            // calculate new position to move to
-            Vector3 newPoint = transform.position + Random.onUnitSphere * dashNearEnemyShift;
-            Vector3 lineOfSight = newPoint - transform.position;
-
-            // check we can see the new position
-            if (!Physics.Raycast(transform.position, lineOfSight, lineOfSight.magnitude, walkLineOfSightMask))
-            {
-                endPosition = newPoint;
-            }
+            endPosition = PickSpotNearEnemy(dashToPlayerShift);
         }
 
-        //lerp enemy to dashPosition
+        // lerp enemy to dashPosition
         for (float time=0; time<1; time += Time.deltaTime * dashSpeed)
         {
             transform.position = Vector3.Lerp(startingPosition, endPosition, time);
@@ -183,6 +155,15 @@ public class EnemyWalking : NetworkBehaviour
 #endregion
 
 #region Engage
+    private void FollowPlayer()
+    {
+        // destination is set manually elsewhere to unless following player for optimization
+        if (followingPlayer)
+        {
+            agent.destination = enemy.target.transform.position;
+        }
+    }
+
     private void CheckEngage()
     {
         if (enemy.target == null) { return; }
@@ -194,8 +175,8 @@ public class EnemyWalking : NetworkBehaviour
 
         if (enemy.currentState == EnemyState.Chase)
         {
-            PickSpotNearPlayer();
-            Move();
+            ApproachPlayer();
+            FollowPlayer();
         }
     }
 
@@ -206,7 +187,7 @@ public class EnemyWalking : NetworkBehaviour
         disengageTimer = 0f;
     }
 
-    private void PickSpotNearPlayer()
+    private void ApproachPlayer()
     {
         if (pickSpotTimer < pickChaseSpotCooldown)
         {
@@ -222,7 +203,10 @@ public class EnemyWalking : NetworkBehaviour
             return;
         }
 
-        // go to player or just get close
+        // movement options
+        // 1. follow player
+        // 2. move close to player
+        // 3. move close to ourselves
         float aggroValue = Random.value;
         if (aggroValue < followPercent)
         {
@@ -231,34 +215,13 @@ public class EnemyWalking : NetworkBehaviour
         else if (aggroValue < getClosePercent)
         {
             followingPlayer = false;
-
-            // get player position
-            Vector3 playerPos = enemy.target.transform.position + new Vector3(0,enemy.playerHeight,0);
-
-            // calculate new position near player
             float radius = Random.Range(minChaseShift, maxChaseShift);
-            Vector3 newPoint = playerPos + Random.onUnitSphere * radius; // should be change so that its on a unit circle instead? y=0?
-            Vector3 lineOfSight = newPoint - playerPos;
-
-            // check we can see player from new position
-            if (!Physics.Raycast(playerPos, lineOfSight, lineOfSight.magnitude, walkLineOfSightMask))
-            {
-                agent.destination = newPoint;
-            }
+            agent.destination = PickSpotNearPlayer(radius);
         }
         else
         {
-            // REPETITIVE CODE....
-            // calculate new position to move to
             float radius = Random.Range(minPatrolShift, maxPatrolShift);
-            Vector3 newPoint = transform.position + Random.onUnitSphere * radius;
-            Vector3 lineOfSight = newPoint - transform.position;
-
-            // check we can see the new position
-            if (!Physics.Raycast(transform.position, lineOfSight, lineOfSight.magnitude, walkLineOfSightMask))
-            {
-                agent.destination = newPoint;
-            }
+            agent.destination = PickSpotNearEnemy(radius);
         }
     }
 #endregion
@@ -288,7 +251,6 @@ public class EnemyWalking : NetworkBehaviour
         // stop moving but don't stop agent so he can still patrol
         followingPlayer = false;
         agent.destination = transform.position;
-        Move();
 
         enemy.ChangeState(EnemyState.Idle);
         head.rotation = transform.rotation;
@@ -299,7 +261,7 @@ public class EnemyWalking : NetworkBehaviour
 #region Patrol
     private void CheckPatrol()
     {
-        if (enemy.canSeeTarget) { return;}
+        //if (enemy.canSeeTarget) { return;}
 
         // if we are not chasing the player
         if (enemy.currentState == EnemyState.Idle)
@@ -309,12 +271,11 @@ public class EnemyWalking : NetworkBehaviour
 
         if (enemy.currentState == EnemyState.Patrol)
         {
-            PickSpotNearEnemy();
-            Move();
+            Patrol();
         }
     }
 
-    private void PickSpotNearEnemy()
+    private void Patrol()
     {
         if (pickSpotTimer < pickPatrolSpotCooldown)
         {
@@ -324,13 +285,45 @@ public class EnemyWalking : NetworkBehaviour
 
         // calculate new position to move to
         float radius = Random.Range(minPatrolShift, maxPatrolShift);
+        agent.destination = PickSpotNearEnemy(radius);
+    }
+#endregion
+
+#region PickSpots
+    private Vector3 PickSpotNearPlayer(float radius)
+    {
+        // get player position
+        Vector3 playerPos = enemy.target.transform.position + new Vector3(0,enemy.playerHeight,0);
+
+        // calculate new position near player
+        Vector3 newPoint = playerPos + Random.onUnitSphere * radius; // should be change so that its on a unit circle instead? y=0?
+        Vector3 lineOfSight = newPoint - playerPos;
+
+        // check we can see player from new position
+        if (!Physics.Raycast(playerPos, lineOfSight, lineOfSight.magnitude, walkLineOfSightMask))
+        {
+            return newPoint;
+        }
+        else
+        {
+            return transform.position;
+        }
+    }
+
+    private Vector3 PickSpotNearEnemy(float radius)
+    {
+        // calculate new position to move to
         Vector3 newPoint = transform.position + Random.onUnitSphere * radius;
         Vector3 lineOfSight = newPoint - transform.position;
 
         // check we can see the new position
         if (!Physics.Raycast(transform.position, lineOfSight, lineOfSight.magnitude, walkLineOfSightMask))
         {
-            agent.destination = newPoint;
+            return newPoint;
+        }
+        else
+        {
+            return transform.position;
         }
     }
 #endregion

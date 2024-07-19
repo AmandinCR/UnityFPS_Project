@@ -1,4 +1,6 @@
 using System.Collections;
+using TMPro;
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -8,6 +10,17 @@ using UnityEngine.UI;
 
 public class ProgressBar : MonoBehaviour
 {
+    
+#region Custom
+    [SerializeField] private TextMeshProUGUI damageNumberText;
+
+    public void SetDamage(float damage, float progress)
+    {
+        damageNumberText.text = damage.ToString();
+        SetProgress(progress, DefaultSpeed);
+    }
+#endregion
+
     [SerializeField]
     private Image InstantFillImage;
     [SerializeField]

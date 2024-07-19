@@ -10041,11 +10041,10 @@ MonoBehaviour:
   trailRenderer: {fileID: 3779459639168254664}
   meshes: {fileID: 3382899361405826207}
   selfDestructTime: 5
-  bulletSpeed: 50
+  bulletSpeed: 100
+  penetrationShift: 0.5
   isLocalPlayer: 0
   owner: {fileID: 0}
-  testsphere: {fileID: 461720317208709790, guid: c3a706e3eb9dd524ea3dac1b453d5713,
-    type: 3}
 --- !u!1 &8524692732264181716
 GameObject:
   m_ObjectHideFlags: 0

@@ -276,10 +276,14 @@ MonoBehaviour:
   minPatrolShift: 5
   maxPatrolShift: 10
   pickPatrolSpotCooldown: 10
+  canRetreatDash: 1
+  canAttackDash: 1
   dashToPlayerShift: 2
   dashNearEnemyShift: 10
   dashSpeed: 5
   dashCooldown: 15
+  dashHealthTrigger: 50
+  dashPlayerDistanceTrigger: 10
 --- !u!114 &5809173049378822542
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -295,6 +299,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  canAttack: 1
   stopToAttack: 1
   damage: 10
   cooldown: 1
@@ -337,6 +342,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  canLaser: 1
   stopToLaser: 1
   laserPrefab: {fileID: 1553325915567638451, guid: 662d3ed96da60d14f82007ef39971250,
     type: 3}
@@ -344,6 +350,8 @@ MonoBehaviour:
   laserDuration: 2
   laserDamage: 1
   laserTickRate: 0.5
+  laserPercent: 0.5
+  canShoot: 1
   stopToShoot: 0
   projectilePrefab: {fileID: 2696809062103121917, guid: d19c97c8ce446fd409b7a8310f317b57,
     type: 3}

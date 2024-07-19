@@ -86,7 +86,8 @@ public class Enemy : NetworkBehaviour
     private void RemoveHealth(float damage)
     {
         health -= damage;
-        healthBar.SetProgress(health / maxHealth, 3);
+        healthBar.SetDamage(damage, health / maxHealth);
+        //healthBar.SetProgress(health / maxHealth);
 
         if (health <= 0.0f) 
         {
@@ -99,9 +100,9 @@ public class Enemy : NetworkBehaviour
         {
             canMove = false;
         }
+        Destroy(healthBar.gameObject);
         
         yield return new WaitForSeconds(1f);
-        Destroy(healthBar.gameObject);
 
         if (isServer)
         {  
