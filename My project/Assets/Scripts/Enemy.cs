@@ -7,31 +7,38 @@ using UnityEngine.AI;
 
 public class Enemy : NetworkBehaviour
 {
+    [Header("References")]
     [SerializeField] private ProgressBar healthBar;
+    [HideInInspector] public GameObject target;
+    [HideInInspector] public EnemyManager enemyManager;
+
+    [Header("States")]
+    public EnemyState currentState;
+    public EnemyAttackState currentAttackState;
+    public bool canSeeTarget = false;
+    public bool canMove = true;
+
+    [Header("Parameters")]
     [SerializeField] private float maxHealth = 100f;
     private float health = 100f;
     [SerializeField] private float pointWorth = 1;
-    [HideInInspector] public GameObject target;
-    public bool canSeeTarget = false;
-    public EnemyState currentState;
-    [SerializeField] private EnemyState initState = EnemyState.Idle;
-    [HideInInspector] public EnemyManager enemyManager;
     public float playerHeight = 1f;
 
     private void Start() 
     {
-        currentState = initState;
+        currentState = EnemyState.Idle;
+        currentAttackState = EnemyAttackState.Idle;
         health = maxHealth;
     }
 
     public void ChangeState(EnemyState newState)
     {
-        if (currentState == EnemyState.Attack && newState == EnemyState.Chase) 
-        { 
-            return; // don't allow to move and attack
-        }
-
         currentState = newState;
+    }
+
+    public void ChangeAttackState(EnemyAttackState newState)
+    {
+        currentAttackState = newState;
     }
 
     public void SetupHealthBar(Canvas canvas, Camera cam)
@@ -84,12 +91,16 @@ public class Enemy : NetworkBehaviour
     }
 
     private IEnumerator Die() {
+        if (isServer)
+        {
+            canMove = false;
+        }
+        
+        yield return new WaitForSeconds(1f);
         Destroy(healthBar.gameObject);
 
         if (isServer)
         {  
-            GetComponent<EnemyWalking>().canMove = false;
-            yield return new WaitForSeconds(1f);
             enemyManager.enemiesAlive--;
             NetworkServer.Destroy(this.gameObject);
         }

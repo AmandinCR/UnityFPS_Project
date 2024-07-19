@@ -5,9 +5,11 @@ using UnityEngine;
 
 public class EnemyAttack : NetworkBehaviour
 {
+    [SerializeField] private bool stopToAttack = false;
     [SerializeField] private float damage;
     [SerializeField] private float cooldown;
     [SerializeField] private float attackRange;
+    [SerializeField] private float attackDuration;
     private float attackTimer = 0f;
     private Enemy enemy;
 
@@ -30,15 +32,14 @@ public class EnemyAttack : NetworkBehaviour
     {
         if (attackTimer <= 0f) 
         {
-            if (enemy.currentState == EnemyState.Attack)
+            if (enemy.currentAttackState == EnemyAttackState.Idle)
             {
-                enemy.ChangeState(EnemyState.Idle);
-            }
-
-            if (enemy.target != null) {
-                float distanceToTarget = Vector3.Distance(transform.position, enemy.target.transform.position);
-                if (distanceToTarget <= attackRange) {
-                    ServerAttack(enemy.target);
+                if (enemy.target != null) 
+                {
+                    float distanceToTarget = Vector3.Distance(transform.position, enemy.target.transform.position);
+                    if (distanceToTarget <= attackRange) {
+                        StartCoroutine(ServerAttack(enemy.target));
+                    }
                 }
             }
         }
@@ -49,11 +50,20 @@ public class EnemyAttack : NetworkBehaviour
     }
 
     // RUNS ONLY ON SERVER
-    private void ServerAttack(GameObject target) 
+    private IEnumerator ServerAttack(GameObject target) 
     {
         attackTimer = cooldown;
-        enemy.ChangeState(EnemyState.Attack);
+        enemy.ChangeAttackState(EnemyAttackState.Attack);
         RpcAttack(target);
+        if (stopToAttack)
+        {
+            enemy.canMove = false;
+        }
+
+        yield return new WaitForSeconds(attackDuration);
+
+        enemy.ChangeAttackState(EnemyAttackState.Idle);
+        enemy.canMove = true;
     }
 
     // RUNS ONLY ON CLIENTS

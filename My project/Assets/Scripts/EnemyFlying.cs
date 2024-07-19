@@ -6,23 +6,32 @@ using UnityEngine;
 
 public class EnemyFlying : NetworkBehaviour
 {
+    [Header("References")]
+    [SerializeField] private Rigidbody rb;
     private Enemy enemy;
-    [SerializeField] private float disengageTime = 1.0f;
-    private float disengageTimer = 0f;
-    [SerializeField] private float minShift = 3f;
-    [SerializeField] private float maxShift = 6f;
-    [SerializeField] private float chaseSpeed = 2f;
+
+    [Header("Other")]
     [SerializeField] private float checkTerrainRadius = 0.1f;
-    private float pickSpotTimer;
-    [SerializeField] private float pickChaseSpotCooldown = 2f;
-    private Vector3 flyLocation;
     [SerializeField] private LayerMask flyLineOfSightMask;
     [SerializeField] private float flyLocationEpsilon = 0.5f;
-    [SerializeField] private Rigidbody rb;
+
+    [Header("Disengage")]
+    private float disengageTimer = 0f;
+    [SerializeField] private float disengageTime = 1.0f;
+
+    [Header("Chase")]
+    [SerializeField] private float minChaseShift = 3f;
+    [SerializeField] private float maxChaseShift = 6f;
+    [SerializeField] private float chaseSpeed = 2f;
+    private float pickSpotTimer;
+
+    [Header("Patrol")]
     [SerializeField] private float minPatrolShift = 3f;
     [SerializeField] private float maxPatrolShift = 6f;
     [SerializeField] private float pickPatrolSpotCooldown = 10f;
     [SerializeField] private float patrolSpeed = 1f;
+    [SerializeField] private float pickChaseSpotCooldown = 2f;
+    private Vector3 flyLocation;
 
     [ServerCallback]
     private void Start()
@@ -38,53 +47,28 @@ public class EnemyFlying : NetworkBehaviour
     [ServerCallback]
     private void FixedUpdate()
     {
-        CheckEngage();
-        CheckDisengage();
-
-        CheckPatrol();
+        if (enemy.canMove)
+        {
+            CheckEngage();
+            CheckDisengage();
+            CheckPatrol();
+        }
 
         if (pickSpotTimer < Mathf.Max(pickPatrolSpotCooldown, pickChaseSpotCooldown))
         {
             pickSpotTimer += Time.fixedDeltaTime;
         }
-    }
 
-    private void CheckPatrol()
-    {
-        if (enemy.canSeeTarget) { return;}
-
-        if (enemy.currentState == EnemyState.Idle)
-        {
-            enemy.ChangeState(EnemyState.Patrol);
-        }
-
-        if (enemy.currentState == EnemyState.Patrol)
-        {
-            PickPatrolSpot();
-            Move();
-        }
+        LookAtTarget();
     }
 
     private void LookAtTarget()
     {
-        transform.LookAt(enemy.target.transform.position + new Vector3(0,enemy.playerHeight,0));
-    }
-
-    private void CheckEngage()
-    {
         if (enemy.target == null) { return; }
 
-        if (enemy.canSeeTarget)
-        {
-            Engage();
-        }
-
-        // we are chasing the player
         if (enemy.currentState == EnemyState.Chase)
         {
-            PickSpotNearPlayer();
-            LookAtTarget();
-            Move();
+            transform.LookAt(enemy.target.transform.position + new Vector3(0,enemy.playerHeight,0));
         }
     }
 
@@ -104,6 +88,24 @@ public class EnemyFlying : NetworkBehaviour
         }
     }
 
+#region Engage
+    private void CheckEngage()
+    {
+        if (enemy.target == null) { return; }
+
+        if (enemy.canSeeTarget)
+        {
+            Engage();
+        }
+
+        // we are chasing the player
+        if (enemy.currentState == EnemyState.Chase)
+        {
+            PickSpotNearPlayer();
+            Move();
+        }
+    }
+
     private void Engage()
     {
         // start chasing
@@ -113,6 +115,35 @@ public class EnemyFlying : NetworkBehaviour
         }
     }
 
+    private void PickSpotNearPlayer()
+    {
+        if (pickSpotTimer < pickChaseSpotCooldown)
+        {
+            return;
+        }
+        pickSpotTimer = 0f;
+
+        // get player position
+        Vector3 playerPos = enemy.target.transform.position + new Vector3(0,enemy.playerHeight,0);
+
+        // calculate new position near player
+        float radius = Random.Range(minChaseShift, maxChaseShift);
+        Vector3 newPoint = playerPos + Random.onUnitSphere * radius;
+        Vector3 lineOfSight = newPoint - playerPos;
+
+        // check new position is not in a wall
+        if (!Physics.CheckSphere(newPoint, checkTerrainRadius, flyLineOfSightMask))
+        {
+            // check we can see player from new position
+            if (!Physics.Raycast(playerPos, lineOfSight, lineOfSight.magnitude, flyLineOfSightMask))
+            {
+                flyLocation = newPoint;
+            }
+        }
+    }
+#endregion
+
+#region Disengage
     private void CheckDisengage()
     {
         if (enemy.currentState == EnemyState.Chase) // chasing player
@@ -137,36 +168,26 @@ public class EnemyFlying : NetworkBehaviour
         enemy.ChangeState(EnemyState.Idle);
         disengageTimer = 0f;
     }
+#endregion
 
-    private void PickSpotNearPlayer()
+#region Patrol
+    private void CheckPatrol()
     {
-        if (pickSpotTimer < pickChaseSpotCooldown)
+        if (enemy.canSeeTarget) { return;}
+
+        if (enemy.currentState == EnemyState.Idle)
         {
-            return;
+            enemy.ChangeState(EnemyState.Patrol);
         }
-        pickSpotTimer = 0f;
 
-        // get player position
-        Vector3 playerPos = enemy.target.transform.position + new Vector3(0,enemy.playerHeight,0);
-
-        // calculate new position near player
-        float radius = Random.Range(minShift, maxShift);
-        Vector3 newPoint = playerPos + Random.onUnitSphere * radius;
-        Vector3 lineOfSight = newPoint - playerPos;
-
-        // check new position is not in a wall
-        if (!Physics.CheckSphere(newPoint, checkTerrainRadius, flyLineOfSightMask))
+        if (enemy.currentState == EnemyState.Patrol)
         {
-            // check we can see player from new position
-            if (!Physics.Raycast(playerPos, lineOfSight, lineOfSight.magnitude, flyLineOfSightMask))
-            {
-                flyLocation = newPoint;
-            }
+            PickSpotNearEnemy();
+            Move();
         }
-        //Debug.DrawRay(origin, lineOfSight, Color.green, 10f, false);
     }
 
-    private void PickPatrolSpot()
+    private void PickSpotNearEnemy()
     {
         if (pickSpotTimer < pickPatrolSpotCooldown)
         {
@@ -190,4 +211,5 @@ public class EnemyFlying : NetworkBehaviour
             }
         }
     }
+#endregion
 }

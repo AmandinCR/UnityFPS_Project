@@ -38,9 +38,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 2740414476198134742}
   - {fileID: 3548703925772619714}
   - {fileID: 7864068137925484241}
-  - {fileID: 2740414476198134742}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &226481180525666226
@@ -158,13 +158,14 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   healthBar: {fileID: 8025300507421439544}
+  target: {fileID: 0}
+  enemyManager: {fileID: 0}
+  currentState: 0
+  currentAttackState: 0
+  canSeeTarget: 0
+  canMove: 1
   maxHealth: 100
   pointWorth: 1
-  target: {fileID: 0}
-  canSeeTarget: 0
-  currentState: 0
-  initState: 0
-  enemyManager: {fileID: 0}
   playerHeight: 1
 --- !u!114 &2577367456029125124
 MonoBehaviour:
@@ -181,21 +182,21 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  disengageTime: 3
-  minShift: 3
-  maxShift: 6
-  chaseSpeed: 15
+  rb: {fileID: 474621846667277379}
   checkTerrainRadius: 0.2
-  pickChaseSpotCooldown: 2
   flyLineOfSightMask:
     serializedVersion: 2
     m_Bits: 1
   flyLocationEpsilon: 0.5
-  rb: {fileID: 474621846667277379}
+  disengageTime: 10
+  minChaseShift: 3
+  maxChaseShift: 6
+  chaseSpeed: 15
   minPatrolShift: 3
   maxPatrolShift: 6
   pickPatrolSpotCooldown: 10
   patrolSpeed: 5
+  pickChaseSpotCooldown: 2
 --- !u!114 &2138933734980811291
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -211,11 +212,19 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  stopToLaser: 1
+  laserPrefab: {fileID: 1553325915567638451, guid: 662d3ed96da60d14f82007ef39971250,
+    type: 3}
+  laserCooldown: 10
+  laserDuration: 3
+  laserDamage: 1
+  laserTickRate: 0.5
+  stopToShoot: 1
   projectilePrefab: {fileID: 2696809062103121917, guid: d19c97c8ce446fd409b7a8310f317b57,
     type: 3}
-  damage: 5
+  shootDamage: 5
   spawnForce: 100
-  shootCooldown: 2
+  shootCooldown: 5
   magSize: 3
   fireRate: 0.2
   attackRange: 15
@@ -237,9 +246,11 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  stopToAttack: 0
   damage: 20
   cooldown: 3
   attackRange: 2
+  attackDuration: 0
 --- !u!114 &4103536192725297692
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -684,6 +695,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1774453882387076700, guid: 196ce54122dde9748977961a8f7cb007,
+        type: 3}
+      propertyPath: Target
+      value: 
+      objectReference: {fileID: 9074157490460077694}
     - target: {fileID: 3731882731123125237, guid: 196ce54122dde9748977961a8f7cb007,
         type: 3}
       propertyPath: m_Name

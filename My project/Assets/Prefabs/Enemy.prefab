@@ -237,13 +237,14 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   healthBar: {fileID: 426043217635282214}
+  target: {fileID: 0}
+  enemyManager: {fileID: 0}
+  currentState: 0
+  currentAttackState: 0
+  canSeeTarget: 0
+  canMove: 1
   maxHealth: 100
   pointWorth: 1
-  target: {fileID: 0}
-  canSeeTarget: 0
-  currentState: 0
-  initState: 0
-  enemyManager: {fileID: 0}
   playerHeight: 1
 --- !u!114 &4417391556647428425
 MonoBehaviour:
@@ -260,9 +261,20 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  disengageTime: 3
   head: {fileID: 4518775858252536017}
-  canMove: 1
+  walkLineOfSightMask:
+    serializedVersion: 2
+    m_Bits: 1
+  disengageTime: 10
+  followPercent: 0.5
+  getClosePercent: 0.8
+  minChaseShift: 5
+  maxChaseShift: 10
+  pickChaseSpotCooldown: 5
+  minPatrolShift: 5
+  maxPatrolShift: 10
+  pickPatrolSpotCooldown: 10
+  minFollowPlayerDistance: 30
 --- !u!114 &5809173049378822542
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -278,9 +290,11 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  stopToAttack: 1
   damage: 10
   cooldown: 1
   attackRange: 2
+  attackDuration: 2
 --- !u!114 &7342335905948699991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -296,8 +310,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  farthestPlayerCheck: 100
-  followDistance: 40
+  farthestPlayerCheck: 50
+  followDistance: 50
   findPlayersTime: 1
   chaseLineOfSightMask:
     serializedVersion: 2
@@ -318,12 +332,20 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  stopToLaser: 1
+  laserPrefab: {fileID: 1553325915567638451, guid: 662d3ed96da60d14f82007ef39971250,
+    type: 3}
+  laserCooldown: 10
+  laserDuration: 2
+  laserDamage: 1
+  laserTickRate: 0.5
+  stopToShoot: 0
   projectilePrefab: {fileID: 2696809062103121917, guid: d19c97c8ce446fd409b7a8310f317b57,
     type: 3}
-  damage: 5
+  shootDamage: 5
   spawnForce: 100
-  shootCooldown: 15
-  magSize: 2
+  shootCooldown: 5
+  magSize: 1
   fireRate: 0.2
   attackRange: 15
   vfxStart: {fileID: 5096670907719816196}
