@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class EnemyAttack : NetworkBehaviour
 {
+    public bool canAttack = true;
     [SerializeField] private bool stopToAttack = false;
     [SerializeField] private float damage;
     [SerializeField] private float cooldown;
@@ -30,6 +31,8 @@ public class EnemyAttack : NetworkBehaviour
     // RUNS ONLY ON SERVER
     private void CheckAttack()
     {
+        if (!canAttack) { return;}
+
         if (attackTimer <= 0f) 
         {
             if (enemy.currentAttackState == EnemyAttackState.Idle)

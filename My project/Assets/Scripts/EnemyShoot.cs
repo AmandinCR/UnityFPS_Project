@@ -9,14 +9,17 @@ using Mirror.Examples.Basic;
 public class EnemyShoot : NetworkBehaviour
 {
     [Header("Laser")]
+    public bool canLaser = true;
     [SerializeField] private bool stopToLaser = false;
     [SerializeField] private GameObject laserPrefab;
     [SerializeField] private float laserCooldown;
     [SerializeField] private float laserDuration;
     [SerializeField] private float laserDamage;
     [SerializeField] private float laserTickRate;
+    [SerializeField] private float laserPercent = 0.5f;
 
     [Header("Projectiles")]
+    public bool canShoot = true;
     [SerializeField] private bool stopToShoot = false;
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private float shootDamage;
@@ -66,13 +69,15 @@ public class EnemyShoot : NetworkBehaviour
             {
                 if (enemy.currentState == EnemyState.Chase && enemy.currentAttackState == EnemyAttackState.Idle) 
                 {
-                    if (Random.value > 0.5f)
+                    if (Random.value > laserPercent)
                     {
-                        StartCoroutine(ServerShoot());
+                        if (canShoot)
+                            StartCoroutine(ServerShoot());
                     }
                     else
                     {
-                        StartCoroutine(ServerLaser());
+                        if (canLaser)
+                            StartCoroutine(ServerLaser());
                     }
                 }
             }

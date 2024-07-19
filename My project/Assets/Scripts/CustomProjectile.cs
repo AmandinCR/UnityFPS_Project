@@ -15,6 +15,7 @@ public class CustomProjectile : MonoBehaviour
     [Header("Bullet Properties")]
     [SerializeField] private float selfDestructTime = 5f;
     [SerializeField] private float bulletSpeed = 1f;
+    [SerializeField] private float penetrationShift = 0.5f;
     private float damage;
     private PlayerItems items;
     private Vector3 camForward;
@@ -60,13 +61,15 @@ public class CustomProjectile : MonoBehaviour
     private void CheckPierce()
     {
         pierceCount++;
-        transform.LookAt(transform.position + camForward, transform.up); // too lazy to find the right function
-        if (pierceCount > items.penetrators) {
+        if (pierceCount > items.penetrators) 
+        {
             StopAllCoroutines();
             StartCoroutine(DestroyProjectile());
         }
         else
         {
+            transform.position += transform.forward * penetrationShift;
+            transform.LookAt(transform.position + camForward, transform.up); // too lazy to find the right function
             hitSomething = false;
         }
     }
@@ -91,6 +94,7 @@ public class CustomProjectile : MonoBehaviour
     private Vector3 start;
     private Vector3 end;
     private bool shotStarted = false;
+
     private void Start()
     {
         StartCoroutine(SelfDestruct());
@@ -103,7 +107,6 @@ public class CustomProjectile : MonoBehaviour
         // check in front of the bullet for collisions
         float raycastDistance = 2 * bulletSpeed * Time.fixedDeltaTime;
         float moveDistance = bulletSpeed * Time.fixedDeltaTime;
-        // check behind if we missed something
         if (Physics.Raycast(transform.position, transform.forward, out projectileHit, raycastDistance, raycastLayerMask))
         {
             hitSomething = true;
@@ -128,7 +131,7 @@ public class CustomProjectile : MonoBehaviour
             shotStarted = true;
             if (hitSomething)
             {
-                end = projectileHit.point;
+                end = projectileHit.point + transform.forward;
             }
             else
             {

@@ -6,5 +6,6 @@ public enum EnemyAttackState
 {
     Idle,
     Shoot,
-    Attack
+    Attack,
+    Dash
 }

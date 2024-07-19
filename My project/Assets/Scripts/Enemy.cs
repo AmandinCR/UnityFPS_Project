@@ -20,15 +20,16 @@ public class Enemy : NetworkBehaviour
 
     [Header("Parameters")]
     [SerializeField] private float maxHealth = 100f;
-    private float health = 100f;
+    public float health = 100f;
     [SerializeField] private float pointWorth = 1;
     public float playerHeight = 1f;
 
-    private void Start() 
+    private void Start()
     {
         currentState = EnemyState.Idle;
         currentAttackState = EnemyAttackState.Idle;
         health = maxHealth;
+        SetupHealthBar();
     }
 
     public void ChangeState(EnemyState newState)
@@ -41,10 +42,10 @@ public class Enemy : NetworkBehaviour
         currentAttackState = newState;
     }
 
-    public void SetupHealthBar(Canvas canvas, Camera cam)
+    private void SetupHealthBar()
     {
-        healthBar.transform.SetParent(canvas.transform);
-        healthBar.GetComponent<FaceCamera>().Camera = cam;
+        healthBar.GetComponent<FaceCamera>().cam = enemyManager.playerCam;
+        healthBar.transform.SetParent(enemyManager.canvas.transform);
     }
 
     #region Damaged

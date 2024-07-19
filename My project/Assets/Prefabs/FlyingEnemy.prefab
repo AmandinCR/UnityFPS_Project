@@ -266,8 +266,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  farthestPlayerCheck: 100
-  followDistance: 15
+  farthestPlayerCheck: 50
+  followDistance: 50
   findPlayersTime: 1
   chaseLineOfSightMask:
     serializedVersion: 2

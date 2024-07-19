@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class FaceCamera : MonoBehaviour
 {
-    [HideInInspector] public Camera Camera;
+    [HideInInspector] public Camera cam;
 
     private void Update()
     {
-        transform.LookAt(Camera.transform, Vector3.up);
+        if (cam != null)
+            transform.LookAt(cam.transform, Vector3.up);
     }
 }

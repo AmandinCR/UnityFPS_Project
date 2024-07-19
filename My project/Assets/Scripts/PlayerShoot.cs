@@ -46,18 +46,22 @@ public class PlayerShoot : NetworkBehaviour
     void Update()
     {
         if (isLocalPlayer) {
-            if (Input.GetMouseButtonDown(0)) 
+            if (canShoot)
             {
-                if (shotTimer <= 0 && canShoot)
+                if (Input.GetMouseButtonDown(0)) 
                 {
-                    Shoot();
-                    shotTimer = shotCooldown;
+                    if (shotTimer <= 0)
+                    {
+                        Shoot();
+                        shotTimer = shotCooldown;
+                    }
+                }
+                if (shotTimer > 0)
+                {
+                    shotTimer -= Time.deltaTime;
                 }
             }
-            if (shotTimer > 0)
-            {
-                shotTimer -= Time.deltaTime;
-            }
+            
         }
     }
 

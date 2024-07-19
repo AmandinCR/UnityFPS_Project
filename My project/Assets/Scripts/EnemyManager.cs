@@ -15,10 +15,14 @@ public class EnemyManager : NetworkBehaviour
     private int spawnedWavesCount = 0;
     private float spawnTimer = 0f;
     private CameraSetup cam;
+    public Canvas canvas;
+    public Camera playerCam;
 
     private void Start()
     {
         cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraSetup>();
+        canvas = cam.canvas;
+        playerCam = cam.GetComponent<Camera>();
     }
 
     [ServerCallback]
@@ -63,7 +67,6 @@ public class EnemyManager : NetworkBehaviour
             // can't move an agent unless his pathfinding is off
             GameObject enemy = Instantiate(enemyPrefab, spawningTransforms[j].position, spawningTransforms[j].rotation);
             enemy.GetComponent<Enemy>().enemyManager = this;
-            enemy.GetComponent<Enemy>().SetupHealthBar(cam.canvas, cam.GetComponent<Camera>());
             NetworkServer.Spawn(enemy);
         }
     }

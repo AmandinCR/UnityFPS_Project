@@ -11,14 +11,14 @@ public class EnemyWalking : NetworkBehaviour
     [SerializeField] private Transform head;
     private Enemy enemy;
     private NavMeshAgent agent;
-    private Vector3 walkLocation;
 
     [Header("Other")]
     [SerializeField] private LayerMask walkLineOfSightMask;
+    [SerializeField] private float minFollowPlayerDistance;
 
     [Header("Disengage")]
     [SerializeField] private float disengageTime = 1.0f;
-    private float disengageTimer = 0f;
+    private float disengageTimer;
 
     [Header("Aggresivness")]
     [SerializeField] private float followPercent = 0.5f; // 0 to 1 float
@@ -36,6 +36,17 @@ public class EnemyWalking : NetworkBehaviour
     [SerializeField] private float maxPatrolShift = 6f;
     [SerializeField] private float pickPatrolSpotCooldown = 10f;
 
+    [Header("Dash")]
+    public bool canRetreatDash = true;
+    public bool canAttackDash = true;
+    [SerializeField] private float dashToPlayerShift = 2f;
+    [SerializeField] private float dashNearEnemyShift = 10f;
+    [SerializeField] private float dashSpeed = 1f;
+    [SerializeField] private float dashCooldown = 15f;
+    [SerializeField] private float dashHealthTrigger = 50f;
+    [SerializeField] private float dashPlayerDistanceTrigger = 10f;
+    private float dashTimer;
+
     [ServerCallback]
     void Start()
     {
@@ -44,7 +55,9 @@ public class EnemyWalking : NetworkBehaviour
             agent = GetComponent<NavMeshAgent>();
             enemy = GetComponent<Enemy>();
             pickSpotTimer = pickPatrolSpotCooldown;
-            walkLocation = transform.position;
+            disengageTimer = 0f;
+            dashTimer = dashCooldown;
+            agent.destination = transform.position;
         }
     }
 
@@ -56,15 +69,24 @@ public class EnemyWalking : NetworkBehaviour
             CheckEngage();
             CheckDisengage();
             CheckPatrol();
+            CheckDash();
         }
         else
         {
-            agent.isStopped = true;
+            if (agent.enabled)
+            {
+                agent.isStopped = true;
+            }
         }
 
         if (pickSpotTimer < Mathf.Max(pickPatrolSpotCooldown, pickChaseSpotCooldown))
         {
             pickSpotTimer += Time.fixedDeltaTime;
+        }
+
+        if (dashTimer < dashCooldown)
+        {
+            dashTimer += Time.fixedDeltaTime;
         }
 
         LookAtTarget();
@@ -82,12 +104,83 @@ public class EnemyWalking : NetworkBehaviour
 
     private void Move()
     {
+        // destination is set manually elsewhere to unless following player for optimization
         if (followingPlayer)
         {
-            walkLocation = enemy.target.transform.position;
+            agent.destination = enemy.target.transform.position;
         }
-        agent.destination = walkLocation;
     }
+
+#region Dash
+    private void CheckDash()
+    {
+        if (enemy.currentState != EnemyState.Chase) { return; } 
+
+        if (dashTimer < dashCooldown) { return; }
+
+        if (enemy.health <= dashHealthTrigger)
+        {
+            if (canRetreatDash)
+                StartCoroutine(Dash(false));
+        }
+        else if ((enemy.target.transform.position - transform.position).magnitude < dashPlayerDistanceTrigger)
+        {
+            if (canAttackDash)
+                StartCoroutine(Dash(true));
+        }
+    }
+
+    private IEnumerator Dash(bool toPlayer)
+    {
+        agent.enabled = false;
+        enemy.canMove = false;
+        enemy.ChangeAttackState(EnemyAttackState.Dash);
+        
+        //pick new position
+        // REPETITIVE CODE....
+        Vector3 startingPosition = transform.position;
+        Vector3 endPosition = transform.position;
+        if (toPlayer)
+        {
+            // get player position
+            Vector3 playerPos = enemy.target.transform.position + new Vector3(0,enemy.playerHeight,0);
+
+            // calculate new position near player
+            Vector3 newPoint = playerPos + Random.onUnitSphere * dashToPlayerShift; // should be change so that its on a unit circle instead? y=0?
+            Vector3 lineOfSight = newPoint - playerPos;
+            
+            // check we can see player from new position
+            if (!Physics.Raycast(playerPos, lineOfSight, lineOfSight.magnitude, walkLineOfSightMask))
+            {
+                endPosition = newPoint;
+            }
+        }
+        else
+        {
+            // calculate new position to move to
+            Vector3 newPoint = transform.position + Random.onUnitSphere * dashNearEnemyShift;
+            Vector3 lineOfSight = newPoint - transform.position;
+
+            // check we can see the new position
+            if (!Physics.Raycast(transform.position, lineOfSight, lineOfSight.magnitude, walkLineOfSightMask))
+            {
+                endPosition = newPoint;
+            }
+        }
+
+        //lerp enemy to dashPosition
+        for (float time=0; time<1; time += Time.deltaTime * dashSpeed)
+        {
+            transform.position = Vector3.Lerp(startingPosition, endPosition, time);
+            yield return null;
+        }
+
+        enemy.ChangeAttackState(EnemyAttackState.Idle);
+        agent.enabled = true;
+        enemy.canMove = true;
+        dashTimer = 0f;
+    }
+#endregion
 
 #region Engage
     private void CheckEngage()
@@ -112,9 +205,6 @@ public class EnemyWalking : NetworkBehaviour
         enemy.ChangeState(EnemyState.Chase);
         disengageTimer = 0f;
     }
-    
-    [SerializeField] private float minFollowPlayerDistance;
-
 
     private void PickSpotNearPlayer()
     {
@@ -153,7 +243,7 @@ public class EnemyWalking : NetworkBehaviour
             // check we can see player from new position
             if (!Physics.Raycast(playerPos, lineOfSight, lineOfSight.magnitude, walkLineOfSightMask))
             {
-                walkLocation = newPoint;
+                agent.destination = newPoint;
             }
         }
         else
@@ -167,7 +257,7 @@ public class EnemyWalking : NetworkBehaviour
             // check we can see the new position
             if (!Physics.Raycast(transform.position, lineOfSight, lineOfSight.magnitude, walkLineOfSightMask))
             {
-                walkLocation = newPoint;
+                agent.destination = newPoint;
             }
         }
     }
@@ -197,7 +287,7 @@ public class EnemyWalking : NetworkBehaviour
     {
         // stop moving but don't stop agent so he can still patrol
         followingPlayer = false;
-        walkLocation = transform.position;
+        agent.destination = transform.position;
         Move();
 
         enemy.ChangeState(EnemyState.Idle);
@@ -240,7 +330,7 @@ public class EnemyWalking : NetworkBehaviour
         // check we can see the new position
         if (!Physics.Raycast(transform.position, lineOfSight, lineOfSight.magnitude, walkLineOfSightMask))
         {
-            walkLocation = newPoint;
+            agent.destination = newPoint;
         }
     }
 #endregion

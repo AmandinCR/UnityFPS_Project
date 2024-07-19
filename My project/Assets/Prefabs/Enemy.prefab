@@ -244,6 +244,7 @@ MonoBehaviour:
   canSeeTarget: 0
   canMove: 1
   maxHealth: 100
+  health: 100
   pointWorth: 1
   playerHeight: 1
 --- !u!114 &4417391556647428425
@@ -265,6 +266,7 @@ MonoBehaviour:
   walkLineOfSightMask:
     serializedVersion: 2
     m_Bits: 1
+  minFollowPlayerDistance: 30
   disengageTime: 10
   followPercent: 0.5
   getClosePercent: 0.8
@@ -274,7 +276,10 @@ MonoBehaviour:
   minPatrolShift: 5
   maxPatrolShift: 10
   pickPatrolSpotCooldown: 10
-  minFollowPlayerDistance: 30
+  dashToPlayerShift: 2
+  dashNearEnemyShift: 10
+  dashSpeed: 5
+  dashCooldown: 15
 --- !u!114 &5809173049378822542
 MonoBehaviour:
   m_ObjectHideFlags: 0
