@@ -17,6 +17,7 @@ public class EnemyShoot : NetworkBehaviour
     [SerializeField] private float laserDamage;
     [SerializeField] private float laserTickRate;
     [SerializeField] private float laserPercent = 0.5f;
+    [SerializeField] private float laserRotateSpeed = 1f;
 
     [Header("Projectiles")]
     public bool canShoot = true;
@@ -35,6 +36,7 @@ public class EnemyShoot : NetworkBehaviour
     private float attackTimer = 0f;
     private Enemy enemy;
     private Quaternion shootRotation;
+    private EnemyMotor motor;
 
     // RUNS ONLY ON SERVER
     [ServerCallback]
@@ -51,6 +53,7 @@ public class EnemyShoot : NetworkBehaviour
         }
         currentAmmo = magSize;
         enemy = GetComponent<Enemy>();
+        motor = GetComponent<EnemyMotor>();
     }
 
     // RUNS ONLY ON SERVER
@@ -69,16 +72,7 @@ public class EnemyShoot : NetworkBehaviour
             {
                 if (enemy.currentState == EnemyState.Chase && enemy.currentAttackState == EnemyAttackState.Idle) 
                 {
-                    if (Random.value > laserPercent)
-                    {
-                        if (canShoot)
-                            StartCoroutine(ServerShoot());
-                    }
-                    else
-                    {
-                        if (canLaser)
-                            StartCoroutine(ServerLaser());
-                    }
+                    PickAttack();
                 }
             }
         }
@@ -88,19 +82,47 @@ public class EnemyShoot : NetworkBehaviour
         }
     }
 
+    private void PickAttack()
+    {
+        float attackValue = Random.value;
+        if (attackValue < laserPercent)
+        {
+            if (canLaser)
+                StartCoroutine(ServerLaser());
+        }
+        else
+        {
+            if (canShoot)
+                StartCoroutine(ServerShoot());
+        }
+    }
+
     #region Laser
     // RUNS ONLY ON SERVER
-    private IEnumerator ServerLaser() 
+    private IEnumerator ServerLaser()
     {
         enemy.ChangeAttackState(EnemyAttackState.Shoot);
         attackTimer = laserCooldown;
-        RpcLaser(enemy.target); // technically should avoid passing gameobjects as reference
+        RpcLaser(); // technically should avoid passing gameobjects as reference
         if (stopToLaser)
         {
             enemy.canMove = false;
         }
 
-        yield return new WaitForSeconds(laserDuration); 
+        float time = 0f;
+        while (time < laserDuration)
+        {
+            Vector3 targetDirection = vfxStart.forward;
+            Vector3 ourDirection = vfxStart.forward;
+            if (enemy.target != null)
+                targetDirection = (enemy.target.transform.position - vfxStart.position).normalized;
+            float step = laserRotateSpeed * Time.deltaTime;
+            Vector3 newDirection = Vector3.RotateTowards(ourDirection, targetDirection, step, 0.0f);
+            motor.LookAtDirection(newDirection);
+
+            time += Time.deltaTime;
+            yield return null;
+        }
 
         enemy.canMove = true;
         enemy.ChangeAttackState(EnemyAttackState.Idle);
@@ -108,13 +130,13 @@ public class EnemyShoot : NetworkBehaviour
 
     // RUNS ONLY ON CLIENTS
     [ClientRpc]
-    private void RpcLaser(GameObject target)
+    private void RpcLaser()
     {
-        Laser(target);
+        Laser();
     }
 
     // RUNS ONLY ON CLIENTS
-    private void Laser(GameObject target)
+    private void Laser()
     {
         GameObject vfx = Instantiate(laserPrefab, vfxStart.position, vfxStart.rotation, vfxStart);
         vfx.GetComponent<Laser>().SetProjectileData(laserDamage, laserDuration, laserTickRate);

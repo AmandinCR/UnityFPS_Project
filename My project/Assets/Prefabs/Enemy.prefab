@@ -262,25 +262,26 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  head: {fileID: 4518775858252536017}
   walkLineOfSightMask:
     serializedVersion: 2
     m_Bits: 1
   minFollowPlayerDistance: 30
+  navMeshRadiusCheck: 2
   disengageTime: 10
   followPercent: 0.5
   getClosePercent: 0.8
   minChaseShift: 5
   maxChaseShift: 10
   pickChaseSpotCooldown: 5
+  canPatrol: 0
   minPatrolShift: 5
   maxPatrolShift: 10
   pickPatrolSpotCooldown: 10
   canRetreatDash: 1
   canAttackDash: 1
-  dashToPlayerShift: 2
-  dashNearEnemyShift: 10
-  dashSpeed: 5
+  dashToPlayerShift: 3
+  dashNearEnemyShift: 3
+  dashSpeed: 3
   dashCooldown: 15
   dashHealthTrigger: 50
   dashPlayerDistanceTrigger: 10
@@ -327,6 +328,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 705
   proximityChaseDistance: 4
+  head: {fileID: 4518775858252536017}
 --- !u!114 &4872097875148624354
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -351,6 +353,7 @@ MonoBehaviour:
   laserDamage: 1
   laserTickRate: 0.5
   laserPercent: 0.5
+  laserRotateSpeed: 0.5
   canShoot: 1
   stopToShoot: 0
   projectilePrefab: {fileID: 2696809062103121917, guid: d19c97c8ce446fd409b7a8310f317b57,

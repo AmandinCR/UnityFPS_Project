@@ -165,6 +165,7 @@ MonoBehaviour:
   canSeeTarget: 0
   canMove: 1
   maxHealth: 100
+  health: 100
   pointWorth: 1
   playerHeight: 1
 --- !u!114 &2577367456029125124
@@ -188,15 +189,26 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   flyLocationEpsilon: 0.5
+  minFollowPlayerDistance: 40
   disengageTime: 10
+  getClosePercent: 0.5
   minChaseShift: 3
   maxChaseShift: 6
   chaseSpeed: 15
+  canPatrol: 0
   minPatrolShift: 3
   maxPatrolShift: 6
   pickPatrolSpotCooldown: 10
   patrolSpeed: 5
   pickChaseSpotCooldown: 2
+  canRetreatDash: 1
+  canAttackDash: 1
+  dashToPlayerShift: 3
+  dashNearEnemyShift: 3
+  dashSpeed: 3
+  dashCooldown: 15
+  dashHealthTrigger: 50
+  dashPlayerDistanceTrigger: 10
 --- !u!114 &2138933734980811291
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -212,6 +224,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  canLaser: 1
   stopToLaser: 1
   laserPrefab: {fileID: 1553325915567638451, guid: 662d3ed96da60d14f82007ef39971250,
     type: 3}
@@ -219,6 +232,9 @@ MonoBehaviour:
   laserDuration: 3
   laserDamage: 1
   laserTickRate: 0.5
+  laserPercent: 0.5
+  laserRotateSpeed: 0.5
+  canShoot: 1
   stopToShoot: 1
   projectilePrefab: {fileID: 2696809062103121917, guid: d19c97c8ce446fd409b7a8310f317b57,
     type: 3}
@@ -246,6 +262,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  canAttack: 1
   stopToAttack: 0
   damage: 20
   cooldown: 3
@@ -273,6 +290,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 705
   proximityChaseDistance: 4
+  head: {fileID: 9074157490460077694}
 --- !u!1 &4942124959879094394
 GameObject:
   m_ObjectHideFlags: 0

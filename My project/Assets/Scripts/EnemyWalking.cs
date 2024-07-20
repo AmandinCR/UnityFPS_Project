@@ -8,19 +8,20 @@ using Mirror;
 public class EnemyWalking : NetworkBehaviour
 {
     [Header("References")]
-    [SerializeField] private Transform head;
     private Enemy enemy;
     private NavMeshAgent agent;
+    private EnemyMotor motor;
 
     [Header("Other")]
     [SerializeField] private LayerMask walkLineOfSightMask;
     [SerializeField] private float minFollowPlayerDistance;
+    [SerializeField] private float navMeshRadiusCheck = 2.0f;
 
     [Header("Disengage")]
     [SerializeField] private float disengageTime = 1.0f;
     private float disengageTimer;
 
-    [Header("Aggresivness")]
+    [Header("Aggresivness, must sum to less than 1")]
     [SerializeField] private float followPercent = 0.5f; // 0 to 1 float
     [SerializeField] private float getClosePercent = 0.8f; // 0 to 1 float
 
@@ -32,6 +33,7 @@ public class EnemyWalking : NetworkBehaviour
     private bool followingPlayer = false;
 
     [Header("Patrol")]
+    [SerializeField] private bool canPatrol = false;
     [SerializeField] private float minPatrolShift = 3f;
     [SerializeField] private float maxPatrolShift = 6f;
     [SerializeField] private float pickPatrolSpotCooldown = 10f;
@@ -54,6 +56,7 @@ public class EnemyWalking : NetworkBehaviour
         {
             agent = GetComponent<NavMeshAgent>();
             enemy = GetComponent<Enemy>();
+            motor = GetComponent<EnemyMotor>();
             pickSpotTimer = pickPatrolSpotCooldown;
             disengageTimer = 0f;
             dashTimer = dashCooldown;
@@ -68,17 +71,22 @@ public class EnemyWalking : NetworkBehaviour
         {
             CheckEngage();
             CheckDisengage();
-            CheckPatrol();
+            if (canPatrol)
+                CheckPatrol();
             CheckDash();
         }
         else
         {
             if (agent.enabled)
-            {
                 agent.isStopped = true;
-            }
         }
+        UpdateTimers();
+        if (enemy.currentAttackState == EnemyAttackState.Idle)
+            LookAtTarget();
+    }
 
+    private void UpdateTimers()
+    {
         if (pickSpotTimer < Mathf.Max(pickPatrolSpotCooldown, pickChaseSpotCooldown))
         {
             pickSpotTimer += Time.fixedDeltaTime;
@@ -88,8 +96,6 @@ public class EnemyWalking : NetworkBehaviour
         {
             dashTimer += Time.fixedDeltaTime;
         }
-
-        LookAtTarget();
     }
 
     private void LookAtTarget()
@@ -98,7 +104,7 @@ public class EnemyWalking : NetworkBehaviour
 
         if (enemy.currentState == EnemyState.Chase)
         {
-            head.LookAt(enemy.target.transform.position + new Vector3(0,enemy.playerHeight,0));
+            motor.LookAtPosition(enemy.target.transform.position + new Vector3(0,enemy.playerHeight,0));
         }
     }
 
@@ -106,7 +112,6 @@ public class EnemyWalking : NetworkBehaviour
     private void CheckDash()
     {
         if (enemy.currentState != EnemyState.Chase) { return; } 
-
         if (dashTimer < dashCooldown) { return; }
 
         if (enemy.health <= dashHealthTrigger)
@@ -123,34 +128,37 @@ public class EnemyWalking : NetworkBehaviour
 
     private IEnumerator Dash(bool toPlayer)
     {
-        agent.enabled = false;
-        enemy.canMove = false;
-        enemy.ChangeAttackState(EnemyAttackState.Dash);
-        
         // pick new position
         Vector3 startingPosition = transform.position;
-        Vector3 endPosition = transform.position;
+        Vector3 endPosition;
         if (toPlayer)
         {
-            // should be change so that its on a unit circle instead? y=0?
             endPosition = PickSpotNearPlayer(dashToPlayerShift);
         }
         else
         {
-            endPosition = PickSpotNearEnemy(dashToPlayerShift);
+            endPosition = PickSpotNearEnemy(dashNearEnemyShift);
         }
 
-        // lerp enemy to dashPosition
-        for (float time=0; time<1; time += Time.deltaTime * dashSpeed)
+        // only dash if we found a place to dash to
+        if (endPosition != startingPosition)
         {
-            transform.position = Vector3.Lerp(startingPosition, endPosition, time);
-            yield return null;
-        }
+            agent.enabled = false;
+            enemy.canMove = false;
+            enemy.ChangeAttackState(EnemyAttackState.Dash);
 
-        enemy.ChangeAttackState(EnemyAttackState.Idle);
-        agent.enabled = true;
-        enemy.canMove = true;
-        dashTimer = 0f;
+            // lerp enemy to dashPosition
+            for (float time=0; time<1; time += Time.deltaTime * dashSpeed)
+            {
+                transform.position = Vector3.Lerp(startingPosition, endPosition, time);
+                yield return null;
+            }
+            
+            enemy.ChangeAttackState(EnemyAttackState.Idle);
+            agent.enabled = true;
+            enemy.canMove = true;
+            dashTimer = 0f;
+        }
     }
 #endregion
 
@@ -183,8 +191,11 @@ public class EnemyWalking : NetworkBehaviour
     private void Engage()
     {
         agent.isStopped = false;
-        enemy.ChangeState(EnemyState.Chase);
         disengageTimer = 0f;
+        if (enemy.currentState != EnemyState.Chase)
+        {
+            enemy.ChangeState(EnemyState.Chase);
+        }
     }
 
     private void ApproachPlayer()
@@ -212,7 +223,7 @@ public class EnemyWalking : NetworkBehaviour
         {
             followingPlayer = true;
         }
-        else if (aggroValue < getClosePercent)
+        else if (aggroValue < followPercent + getClosePercent)
         {
             followingPlayer = false;
             float radius = Random.Range(minChaseShift, maxChaseShift);
@@ -226,12 +237,16 @@ public class EnemyWalking : NetworkBehaviour
     }
 #endregion
 
-#region Disengage
+#region Disengage  
     private void CheckDisengage()
     {
         if (enemy.currentState == EnemyState.Chase) // chasing player
         {
-            if (enemy.target == null || !enemy.canSeeTarget) // lost sight or player too far
+            if (enemy.target == null) // target too far
+            {
+                Disengage();
+            }
+            else if (!enemy.canSeeTarget) // lost sight
             {
                 // chasing for too long
                 if (disengageTimer >= disengageTime)
@@ -253,7 +268,6 @@ public class EnemyWalking : NetworkBehaviour
         agent.destination = transform.position;
 
         enemy.ChangeState(EnemyState.Idle);
-        head.rotation = transform.rotation;
         disengageTimer = 0f;
     }
 #endregion
@@ -290,6 +304,7 @@ public class EnemyWalking : NetworkBehaviour
 #endregion
 
 #region PickSpots
+    // should be change so that its on a unit circle instead of unit sphere? y=0?
     private Vector3 PickSpotNearPlayer(float radius)
     {
         // get player position
@@ -302,7 +317,15 @@ public class EnemyWalking : NetworkBehaviour
         // check we can see player from new position
         if (!Physics.Raycast(playerPos, lineOfSight, lineOfSight.magnitude, walkLineOfSightMask))
         {
-            return newPoint;
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(newPoint, out hit, navMeshRadiusCheck, NavMesh.AllAreas))
+            {
+                return newPoint;
+            }
+            else
+            {
+                return transform.position;
+            }
         }
         else
         {
@@ -319,7 +342,15 @@ public class EnemyWalking : NetworkBehaviour
         // check we can see the new position
         if (!Physics.Raycast(transform.position, lineOfSight, lineOfSight.magnitude, walkLineOfSightMask))
         {
-            return newPoint;
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(newPoint, out hit, navMeshRadiusCheck, NavMesh.AllAreas))
+            {
+                return newPoint;
+            }
+            else
+            {
+                return transform.position;
+            }
         }
         else
         {

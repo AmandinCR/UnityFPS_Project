@@ -5307,7 +5307,7 @@ MonoBehaviour:
   syncInterval: 0
   enemyPrefab: {fileID: 550363922277451164, guid: 78a09a9b7883f2e45b948d68074a6450,
     type: 3}
-  enemyCount: 3
+  enemyCount: 1
   spawningTransforms:
   - {fileID: 1786476028}
   - {fileID: 215606843}
@@ -6417,7 +6417,7 @@ MonoBehaviour:
   syncInterval: 0
   enemyPrefab: {fileID: 4511201160075575705, guid: 3dcf62ddf03d7f74eb1ac9320cf5cd4a,
     type: 3}
-  enemyCount: 3
+  enemyCount: 1
   spawningTransforms:
   - {fileID: 8082020227291037525}
   - {fileID: 2004214772}
