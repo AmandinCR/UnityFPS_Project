@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Steamworks;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -15,19 +16,22 @@ public class CustomProjectile : MonoBehaviour
     [Header("Bullet Properties")]
     [SerializeField] private float selfDestructTime = 5f;
     [SerializeField] private float bulletSpeed = 1f;
-    [SerializeField] private float penetrationShift = 0.5f;
+    
+    private float initialDamage;
     private float damage;
     private PlayerItems items;
     private Vector3 camForward;
     private RaycastHit projectileHit;
     [HideInInspector] public bool isLocalPlayer = false;
     [HideInInspector] public PlayerSetup owner;
+    
 
 #endregion
 
     public void SetProjectileData(float dam, Vector3 trueDirection, PlayerItems itemData)
     {
-        damage = dam;
+        initialDamage = dam;
+        damage = initialDamage;
         items = itemData;
         camForward = trueDirection;
     }
@@ -35,6 +39,7 @@ public class CustomProjectile : MonoBehaviour
     // Gets called when the projectile hits anything in raycastLayerMask
     private void OnHit()
     {
+        CheckExplosion();
         if (projectileHit.transform.root.gameObject.layer == 8) // enemy layer
         {
             OnEnemyHit();
@@ -58,9 +63,12 @@ public class CustomProjectile : MonoBehaviour
 
 #region Item Effects
     private int pierceCount = 0;
+    [SerializeField] private float penetrationShift = 0.5f;
+    [SerializeField] private float pierceDamageMultiplier = 0.5f;
     private void CheckPierce()
     {
         pierceCount++;
+        damage = damage + initialDamage*pierceDamageMultiplier;
         if (pierceCount > items.penetrators) 
         {
             StopAllCoroutines();
@@ -73,6 +81,22 @@ public class CustomProjectile : MonoBehaviour
             hitSomething = false;
         }
     }
+
+    [SerializeField] private float explosionDamageMultiplier = 0.5f;
+    [SerializeField] private GameObject explosionPrefab;
+    [SerializeField] private float explosionRadiusMultiplier = 1;
+    private void CheckExplosion() {
+        
+        if (items.exploders > 0) {
+            GameObject explosion = Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+            explosion.transform.localScale = (1 + (items.exploders-1)*explosionRadiusMultiplier)*Vector3.one;
+            Explosion myExplosion = explosion.GetComponent<Explosion>();
+            myExplosion.damage = damage*explosionDamageMultiplier;
+            myExplosion.owner = owner;
+        }
+        
+    }
+
 #endregion
 
     private IEnumerator DestroyProjectile()

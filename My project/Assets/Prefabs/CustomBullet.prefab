@@ -10042,9 +10042,11 @@ MonoBehaviour:
   meshes: {fileID: 3382899361405826207}
   selfDestructTime: 5
   bulletSpeed: 100
-  penetrationShift: 0.5
   isLocalPlayer: 0
   owner: {fileID: 0}
+  penetrationShift: 0.5
+  explosionPrefab: {fileID: 8975129827954384750, guid: 499e34891d10a3944adadaa3450c068e,
+    type: 3}
 --- !u!1 &8524692732264181716
 GameObject:
   m_ObjectHideFlags: 0

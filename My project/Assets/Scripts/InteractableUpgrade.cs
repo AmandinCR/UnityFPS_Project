@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class InteractableUpgrade : MonoBehaviour
 {
-
+    [SerializeField] private ItemTypes item;
     private void OnTriggerStay(Collider co)
     {
         if (Input.GetKey(KeyCode.E))
@@ -22,7 +22,6 @@ public class InteractableUpgrade : MonoBehaviour
 
     private void OnItemPickup(Collider co)
     {
-        co.GetComponent<PlayerShoot>().canShoot = true;
-        Debug.Log("picked up");
+        co.GetComponent<PlayerItems>().ChangeItems(item);
     }
 }
