@@ -100,7 +100,7 @@ public class Enemy : NetworkBehaviour
         {
             canMove = false;
         }
-        Destroy(healthBar.gameObject);
+        //Destroy(healthBar.gameObject);
         
         yield return new WaitForSeconds(1f);
 
@@ -109,6 +109,11 @@ public class Enemy : NetworkBehaviour
             enemyManager.enemiesAlive--;
             NetworkServer.Destroy(this.gameObject);
         }
+    }
+
+    private void OnDestroy()
+    {
+        Destroy(healthBar.gameObject);
     }
     #endregion
 }

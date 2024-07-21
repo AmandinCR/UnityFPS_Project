@@ -1760,7 +1760,7 @@ PrefabInstance:
     - target: {fileID: 598721785317241279, guid: 2dd9e260da9191a48891f2fae31c1e62,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3432088228984556544, guid: 2dd9e260da9191a48891f2fae31c1e62,
         type: 3}
@@ -5463,7 +5463,7 @@ MonoBehaviour:
   syncInterval: 0
   enemyPrefab: {fileID: 550363922277451164, guid: 78a09a9b7883f2e45b948d68074a6450,
     type: 3}
-  enemyCount: 1
+  enemyCount: 3
   spawningTransforms:
   - {fileID: 1786476028}
   - {fileID: 215606843}
@@ -6573,7 +6573,7 @@ MonoBehaviour:
   syncInterval: 0
   enemyPrefab: {fileID: 4511201160075575705, guid: 3dcf62ddf03d7f74eb1ac9320cf5cd4a,
     type: 3}
-  enemyCount: 1
+  enemyCount: 3
   spawningTransforms:
   - {fileID: 8082020227291037525}
   - {fileID: 2004214772}
@@ -6767,7 +6767,7 @@ PrefabInstance:
     - target: {fileID: 6206523195204073691, guid: 16c36a00821ef214cbb581fcd580c1c3,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7667321143438277827, guid: 16c36a00821ef214cbb581fcd580c1c3,
         type: 3}
