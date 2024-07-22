@@ -4,6 +4,7 @@ using Steamworks;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Accessibility;
 
 public class CustomProjectile : MonoBehaviour
 {
@@ -26,10 +27,11 @@ public class CustomProjectile : MonoBehaviour
     [HideInInspector] public PlayerSetup owner;
     private int pierceCount;
     private float cameraShift;
+    private int bounceCount;
 
 #endregion
 
-    public void SetProjectileData(float dam, Vector3 trueDirection, PlayerItems itemData, float camShift, int pierceCountStart = 0)
+    public void SetProjectileData(float dam, Vector3 trueDirection, PlayerItems itemData, float camShift, int pierceCountStart = 0, int bounceCountStart = 0)
     {
         initialDamage = dam;
         damage = initialDamage;
@@ -37,6 +39,7 @@ public class CustomProjectile : MonoBehaviour
         path = trueDirection;
         cameraShift = camShift;
         pierceCount = pierceCountStart;
+        bounceCount = bounceCountStart;
     }
 
     // Gets called when the projectile hits anything in raycastLayerMask
@@ -47,11 +50,16 @@ public class CustomProjectile : MonoBehaviour
         {
             OnEnemyHit();
         }
-        else
-        {
-            StopAllCoroutines();
-            StartCoroutine(DestroyProjectile());
+        // else
+        // {
+        //     StopAllCoroutines();
+        //     StartCoroutine(DestroyProjectile());
+        // }
+        else {
+            OnWallHit();
         }
+        StopAllCoroutines();
+        StartCoroutine(DestroyProjectile());
     }
 
     private void OnEnemyHit() 
@@ -62,6 +70,10 @@ public class CustomProjectile : MonoBehaviour
             projectileHit.transform.root.GetComponent<Enemy>().TakeDamage(owner, damage);
         }
         CheckPierce();
+    }
+
+    private void OnWallHit() {
+        
     }
 
 #region Item Effects
@@ -83,11 +95,11 @@ public class CustomProjectile : MonoBehaviour
                 CustomProjectile projectile = vfx.GetComponent<CustomProjectile>();
                 projectile.isLocalPlayer = isLocalPlayer;
                 projectile.owner = owner;
-                projectile.SetProjectileData(damage, newPath, items, cameraShift, pierceCount);
+                projectile.SetProjectileData(damage, newPath, items, cameraShift, pierceCountStart: pierceCount);
             }
         }
-        StopAllCoroutines();
-        StartCoroutine(DestroyProjectile());
+        // StopAllCoroutines();
+        // StartCoroutine(DestroyProjectile());
     }
 
     [SerializeField] private float explosionDamageMultiplier = 0.5f;

@@ -6,5 +6,6 @@ public enum ItemTypes
 {
     penetrators,
     exploders,
-    splitters
+    splitters,
+    bouncers
 }
