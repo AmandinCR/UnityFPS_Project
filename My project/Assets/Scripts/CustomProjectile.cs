@@ -26,11 +26,10 @@ public class CustomProjectile : MonoBehaviour
     [HideInInspector] public PlayerSetup owner;
     private int pierceCount;
     private float cameraShift;
-    private CustomProjectile papi;
 
 #endregion
 
-    public void SetProjectileData(float dam, Vector3 trueDirection, PlayerItems itemData, float camShift, int pierceCountStart = 0, CustomProjectile daddy = null)
+    public void SetProjectileData(float dam, Vector3 trueDirection, PlayerItems itemData, float camShift, int pierceCountStart = 0)
     {
         initialDamage = dam;
         damage = initialDamage;
@@ -38,7 +37,6 @@ public class CustomProjectile : MonoBehaviour
         path = trueDirection;
         cameraShift = camShift;
         pierceCount = pierceCountStart;
-        papi = daddy;
     }
 
     // Gets called when the projectile hits anything in raycastLayerMask
@@ -78,23 +76,18 @@ public class CustomProjectile : MonoBehaviour
         if (pierceCount <= items.penetrators) 
         {
             transform.position += transform.forward * penetrationShift;
-            // transform.LookAt(transform.position + camForward, transform.up); // too lazy to find the right function
-            // hitSomething = false;
             for (int i = 0; i < items.splitters+1; i++) {
                 Vector3 newPath = path.normalized-transform.right*cameraShift*i + transform.right*cameraShift*items.splitters/2;
                 Quaternion rot = Quaternion.LookRotation(newPath, Vector3.up);
                 GameObject vfx = Instantiate(customProjectilePrefab, transform.position, rot);
                 CustomProjectile projectile = vfx.GetComponent<CustomProjectile>();
                 projectile.isLocalPlayer = isLocalPlayer;
-                projectile.owner = GetComponent<PlayerSetup>();
-                projectile.SetProjectileData(damage, newPath, items, cameraShift, pierceCount, this);
+                projectile.owner = owner;
+                projectile.SetProjectileData(damage, newPath, items, cameraShift, pierceCount);
             }
-
-        } else {
-            StartCoroutine(DestroyProjectile());
         }
-        this.gameObject.SetActive(false);
         StopAllCoroutines();
+        StartCoroutine(DestroyProjectile());
     }
 
     [SerializeField] private float explosionDamageMultiplier = 0.5f;
@@ -109,7 +102,6 @@ public class CustomProjectile : MonoBehaviour
             myExplosion.damage = damage*explosionDamageMultiplier;
             myExplosion.owner = owner;
         }
-        
     }
 
 #endregion
@@ -117,13 +109,8 @@ public class CustomProjectile : MonoBehaviour
     public IEnumerator DestroyProjectile()
     {
         meshes.SetActive(false);
-        if (papi != null) {
-            StartCoroutine(papi.DestroyProjectile());
-        }
         yield return new WaitForSeconds(trailRenderer.time);
-        if (this.gameObject != null) {
-            Destroy(this.gameObject);
-        }
+        Destroy(this.gameObject);
     }
 
     private IEnumerator SelfDestruct() 

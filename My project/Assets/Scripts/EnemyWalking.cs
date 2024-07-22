@@ -165,7 +165,7 @@ public class EnemyWalking : NetworkBehaviour
 #region Engage
     private void FollowPlayer()
     {
-        // destination is set manually elsewhere to unless following player for optimization
+        // destination is set manually elsewhere unless following player for optimization
         if (followingPlayer)
         {
             agent.destination = enemy.target.transform.position;
@@ -320,7 +320,7 @@ public class EnemyWalking : NetworkBehaviour
             NavMeshHit hit;
             if (NavMesh.SamplePosition(newPoint, out hit, navMeshRadiusCheck, NavMesh.AllAreas))
             {
-                return newPoint;
+                return hit.position;
             }
             else
             {
@@ -345,7 +345,7 @@ public class EnemyWalking : NetworkBehaviour
             NavMeshHit hit;
             if (NavMesh.SamplePosition(newPoint, out hit, navMeshRadiusCheck, NavMesh.AllAreas))
             {
-                return newPoint;
+                return hit.position;
             }
             else
             {
