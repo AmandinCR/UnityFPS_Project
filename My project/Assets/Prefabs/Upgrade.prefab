@@ -178,6 +178,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84115839d5846854695ab5feab670424, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  type: 0
+  items:
+  - {fileID: 11400000, guid: 1493b8bace725044289de6dd51f1df11, type: 2}
+  - {fileID: 11400000, guid: 1f117436f3757e3498f1e416e90424be, type: 2}
+  - {fileID: 11400000, guid: 4ad06cf91867e8f47a5ce324575029ff, type: 2}
+  - {fileID: 11400000, guid: 707cc269c10904d4c9135be50f62ff5c, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  meshRend: {fileID: 384032255505922448}
 --- !u!1 &7780826594386238308
 GameObject:
   m_ObjectHideFlags: 0

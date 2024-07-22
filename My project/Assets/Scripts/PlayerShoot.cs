@@ -215,15 +215,22 @@ public class PlayerShoot : NetworkBehaviour
     {
         if (custom)
         {
-            for (int i = 0; i < items.splitters+1; i++) {
-                Vector3 newPath = path.normalized-cameraRight*cameraShift*i + cameraRight*cameraShift*items.splitters/2;
-                Quaternion rot = Quaternion.LookRotation(newPath, Vector3.up);
-                GameObject vfx = Instantiate(customProjectilePrefab, pos, rot);
-                CustomProjectile projectile = vfx.GetComponent<CustomProjectile>();
-                projectile.isLocalPlayer = isLocalPlayer;
-                projectile.owner = GetComponent<PlayerSetup>();
-                projectile.SetProjectileData(damage, newPath, items, cameraShift);
-            }
+            // // This is for being able to split on first shot
+            // for (int i = 0; i < items.splitters+1; i++) {
+            //     Vector3 newPath = path.normalized-cameraRight*cameraShift*i + cameraRight*cameraShift*items.splitters/2;
+            //     Quaternion rot = Quaternion.LookRotation(newPath, Vector3.up);
+            //     GameObject vfx = Instantiate(customProjectilePrefab, pos, rot);
+            //     CustomProjectile projectile = vfx.GetComponent<CustomProjectile>();
+            //     projectile.isLocalPlayer = isLocalPlayer;
+            //     projectile.owner = GetComponent<PlayerSetup>();
+            //     projectile.SetProjectileData(damage, newPath, items, cameraShift);
+            // }
+            Quaternion rot = Quaternion.LookRotation(path, Vector3.up);
+            GameObject vfx = Instantiate(customProjectilePrefab, pos, rot);
+            CustomProjectile projectile = vfx.GetComponent<CustomProjectile>();
+            projectile.isLocalPlayer = isLocalPlayer;
+            projectile.owner = GetComponent<PlayerSetup>();
+            projectile.SetProjectileData(damage, path, items, cameraShift);
         }
         // else
         // {

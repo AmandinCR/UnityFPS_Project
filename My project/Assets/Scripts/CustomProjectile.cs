@@ -21,12 +21,13 @@ public class CustomProjectile : MonoBehaviour
     private float initialDamage;
     private float damage;
     private PlayerItems items;
-    private Vector3 path;
+    private Vector3 bulletForward;
     private RaycastHit projectileHit;
     [HideInInspector] public bool isLocalPlayer = false;
     [HideInInspector] public PlayerSetup owner;
+    [SerializeField] private GameObject customProjectilePrefab;
     private int pierceCount;
-    private float cameraShift;
+    private float splitShift;
     private int bounceCount;
 
 #endregion
@@ -36,8 +37,8 @@ public class CustomProjectile : MonoBehaviour
         initialDamage = dam;
         damage = initialDamage;
         items = itemData;
-        path = trueDirection;
-        cameraShift = camShift;
+        bulletForward = trueDirection;
+        splitShift = camShift;
         pierceCount = pierceCountStart;
         bounceCount = bounceCountStart;
     }
@@ -45,17 +46,14 @@ public class CustomProjectile : MonoBehaviour
     // Gets called when the projectile hits anything in raycastLayerMask
     private void OnHit()
     {
+        CalculateDamage();
         CheckExplosion();
         if (projectileHit.transform.root.gameObject.layer == 8) // enemy layer
         {
             OnEnemyHit();
-        }
-        // else
-        // {
-        //     StopAllCoroutines();
-        //     StartCoroutine(DestroyProjectile());
-        // }
-        else {
+        } 
+        else 
+        {
             OnWallHit();
         }
         StopAllCoroutines();
@@ -73,33 +71,71 @@ public class CustomProjectile : MonoBehaviour
     }
 
     private void OnWallHit() {
-        
+        CheckBounce();
     }
 
+    private void CreateBullet(Vector3 foward, float newInitialDamage) {
+        Quaternion rot = Quaternion.LookRotation(foward, Vector3.up);
+        GameObject vfx = Instantiate(customProjectilePrefab, transform.position, rot);
+        CustomProjectile projectile = vfx.GetComponent<CustomProjectile>();
+        projectile.isLocalPlayer = isLocalPlayer;
+        projectile.owner = owner;
+        projectile.SetProjectileData(newInitialDamage, foward, items, splitShift, pierceCountStart: pierceCount, bounceCountStart: bounceCount);
+
+    }
+
+
 #region Item Effects
-    
-    [SerializeField] private float penetrationShift = 0.5f;
+
     [SerializeField] private float pierceDamageMultiplier = 0.5f;
-    [SerializeField] private GameObject customProjectilePrefab;
+    [SerializeField] private float bounceDamageMultiplier = 0.0f;
+    private void CalculateDamage() {
+        damage = initialDamage;
+        damage *= 1 + pierceCount*pierceDamageMultiplier; 
+        damage *= 1 + bounceCount*bounceDamageMultiplier;
+    }
+    
+
+    private void CheckBounce() {
+        bounceCount++;
+        if (bounceCount <= items.bouncers)
+        {
+            Vector3 bouncedForward = Vector3.Reflect(bulletForward,projectileHit.normal);
+            CheckSplits(bouncedForward);
+            //CreateBullet(bouncedForward);
+        }
+    }
+    [SerializeField] private float penetrationShift = 0.5f;
+    
     private void CheckPierce()
     {
         pierceCount++;
-        damage = damage + initialDamage*pierceDamageMultiplier;
         if (pierceCount <= items.penetrators) 
         {
             transform.position += transform.forward * penetrationShift;
-            for (int i = 0; i < items.splitters+1; i++) {
-                Vector3 newPath = path.normalized-transform.right*cameraShift*i + transform.right*cameraShift*items.splitters/2;
-                Quaternion rot = Quaternion.LookRotation(newPath, Vector3.up);
-                GameObject vfx = Instantiate(customProjectilePrefab, transform.position, rot);
-                CustomProjectile projectile = vfx.GetComponent<CustomProjectile>();
-                projectile.isLocalPlayer = isLocalPlayer;
-                projectile.owner = owner;
-                projectile.SetProjectileData(damage, newPath, items, cameraShift, pierceCountStart: pierceCount);
+            CheckSplits(bulletForward);
+        }
+    }
+
+    private int splitAmount = 2;
+    [SerializeField] private float splitDamageMultiplier = 0.4f;
+    private void CheckSplits(Vector3 forward) {
+        if (pierceCount + bounceCount <= splitAmount) 
+        {
+            // Creates a pool of damage scaling up by splitDamageMultiplier then distributes it equally across each bullet
+            float splitInitialDamage = initialDamage * (1+splitDamageMultiplier*items.splitters) / items.splitters;    
+            
+            for (int i = 0; i < items.splitters+1; i++)                                                                 
+            {
+                Vector3 newPath = forward.normalized-transform.right*splitShift*i + transform.right*splitShift*items.splitters/2;
+                CreateBullet(newPath, splitInitialDamage);
             }
         }
-        // StopAllCoroutines();
-        // StartCoroutine(DestroyProjectile());
+        else 
+        {
+            CreateBullet(forward, initialDamage);
+        }
+
     }
 
     [SerializeField] private float explosionDamageMultiplier = 0.5f;

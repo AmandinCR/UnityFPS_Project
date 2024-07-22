@@ -28,7 +28,7 @@ public class PlayerItems : NetworkBehaviour
         } else if (item == ItemTypes.splitters) {
             splitters++;
         } else if (item == ItemTypes.bouncers) {
-            splitters++;
+            bouncers++;
         }
     }
 

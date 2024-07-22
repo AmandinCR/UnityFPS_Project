@@ -52699,7 +52699,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   explosionVFX: {fileID: 1944678071814727738}
   owner: {fileID: 0}
-  timeToDestroy: 1
+  timeToDestroy: 0.2
   damage: 0
 --- !u!135 &4796938470676674502
 SphereCollider:
