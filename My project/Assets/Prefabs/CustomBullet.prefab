@@ -10045,8 +10045,12 @@ MonoBehaviour:
   isLocalPlayer: 0
   owner: {fileID: 0}
   penetrationShift: 0.5
+  pierceDamageMultiplier: 0.5
+  customProjectilePrefab: {fileID: 6149620952564726392}
+  explosionDamageMultiplier: 0.5
   explosionPrefab: {fileID: 8975129827954384750, guid: 499e34891d10a3944adadaa3450c068e,
     type: 3}
+  explosionRadiusMultiplier: 1
 --- !u!1 &8524692732264181716
 GameObject:
   m_ObjectHideFlags: 0

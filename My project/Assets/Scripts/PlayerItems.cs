@@ -6,8 +6,8 @@ using Mirror;
 public class PlayerItems : NetworkBehaviour
 {
     public int penetrators = 0;
-
     public int exploders = 0;
+    public int splitters = 0;
 
     public void ChangeItems(ItemTypes item) {
         CmdChangeItems(item);
@@ -24,6 +24,8 @@ public class PlayerItems : NetworkBehaviour
             penetrators++;
         } else if (item == ItemTypes.exploders) {
             exploders++;
+        } else if (item == ItemTypes.splitters) {
+            splitters++;
         }
     }
 

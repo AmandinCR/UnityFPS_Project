@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using KinematicCharacterController.Examples;
 using Mirror;
 using Mirror.Examples.Basic;
+using StinkySteak.SimulationTimer;
 using UnityEngine;
 
 public class PlayerShoot : NetworkBehaviour
@@ -181,52 +182,58 @@ public class PlayerShoot : NetworkBehaviour
     {
         RaycastHit hit;
         Vector3 pos = vfxStart.position;
-        Quaternion rot = vfxStart.rotation;
+        Vector3 path = cam.forward;
         if (Physics.Raycast(cam.position, cam.forward, out hit, maxRaycastDistance, aimLayerMask)) 
         {
-            rot = Quaternion.LookRotation(hit.point - pos, Vector3.up);
+            path = hit.point - pos;
         }
-        CmdShoot(pos, rot, cam.forward);
-        DoShoot(pos, rot, cam.forward);
+
+        CmdShoot(pos, path, cam.right);
+        DoShoot(pos, path, cam.right);
     }
 
     // RUNS ONLY ON SERVER (HOST TECHNICALLY)
     [Command] 
-    void CmdShoot(Vector3 pos, Quaternion rot, Vector3 cameraForward)
+    void CmdShoot(Vector3 pos, Vector3 path, Vector3 cameraRight)
     {
-        RpcShoot(pos, rot, cameraForward);
+        RpcShoot(pos, path, cameraRight);
     }
 
     // RUNS ONLY ON REMOTE CLIENT
     [ClientRpc(includeOwner = false)]
-    void RpcShoot(Vector3 pos, Quaternion rot, Vector3 cameraForward) 
+    void RpcShoot(Vector3 pos, Vector3 path, Vector3 cameraRight) 
     {
         if (!isLocalPlayer) // just in case
         {
-            DoShoot(pos, rot, cameraForward);
+            DoShoot(pos, path, cameraRight);
         }
     }
 
     // RUNS ON ALL CLIENTS
-    private void DoShoot(Vector3 pos, Quaternion rot, Vector3 cameraForward)
+    [SerializeField] private float cameraShift = 0.2f;
+    private void DoShoot(Vector3 pos, Vector3 path, Vector3 cameraRight)
     {
         if (custom)
         {
-            GameObject vfx = Instantiate(customProjectilePrefab, pos, rot);
-            CustomProjectile projectile = vfx.GetComponent<CustomProjectile>();
-            projectile.isLocalPlayer = isLocalPlayer;
-            projectile.owner = GetComponent<PlayerSetup>();
-            projectile.SetProjectileData(damage, cameraForward, items);
+            for (int i = 0; i < items.splitters+1; i++) {
+                Vector3 newPath = path.normalized-cameraRight*cameraShift*i + cameraRight*cameraShift*items.splitters/2;
+                Quaternion rot = Quaternion.LookRotation(newPath, Vector3.up);
+                GameObject vfx = Instantiate(customProjectilePrefab, pos, rot);
+                CustomProjectile projectile = vfx.GetComponent<CustomProjectile>();
+                projectile.isLocalPlayer = isLocalPlayer;
+                projectile.owner = GetComponent<PlayerSetup>();
+                projectile.SetProjectileData(damage, newPath, items, cameraShift);
+            }
         }
-        else
-        {
-            GameObject vfx = Instantiate(projectilePrefab, pos, rot);
-            Projectile projectile = vfx.GetComponent<Projectile>();
-            projectile.playerCol = col;
-            projectile.owner = GetComponent<PlayerSetup>();
-            projectile.isLocalPlayer = isLocalPlayer;
-            projectile.SetProjectileData(damage, spawnForce, gravity, cameraForward, items);
-        }
+        // else
+        // {
+        //     GameObject vfx = Instantiate(projectilePrefab, pos, rot);
+        //     Projectile projectile = vfx.GetComponent<Projectile>();
+        //     projectile.playerCol = col;
+        //     projectile.owner = GetComponent<PlayerSetup>();
+        //     projectile.isLocalPlayer = isLocalPlayer;
+        //     projectile.SetProjectileData(damage, spawnForce, gravity, cameraForward, items);
+        // }
     }
 
     #endregion

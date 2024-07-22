@@ -515,7 +515,8 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   penetrators: 0
-  exploders: 1
+  exploders: 0
+  splitters: 2
 --- !u!114 &-775770431532290274
 MonoBehaviour:
   m_ObjectHideFlags: 0

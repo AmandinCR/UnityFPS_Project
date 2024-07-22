@@ -5,5 +5,6 @@ using UnityEngine;
 public enum ItemTypes
 {
     penetrators,
-    exploders
+    exploders,
+    splitters
 }

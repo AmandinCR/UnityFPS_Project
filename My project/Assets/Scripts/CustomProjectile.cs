@@ -20,20 +20,25 @@ public class CustomProjectile : MonoBehaviour
     private float initialDamage;
     private float damage;
     private PlayerItems items;
-    private Vector3 camForward;
+    private Vector3 path;
     private RaycastHit projectileHit;
     [HideInInspector] public bool isLocalPlayer = false;
     [HideInInspector] public PlayerSetup owner;
-    
+    private int pierceCount;
+    private float cameraShift;
+    private CustomProjectile papi;
 
 #endregion
 
-    public void SetProjectileData(float dam, Vector3 trueDirection, PlayerItems itemData)
+    public void SetProjectileData(float dam, Vector3 trueDirection, PlayerItems itemData, float camShift, int pierceCountStart = 0, CustomProjectile daddy = null)
     {
         initialDamage = dam;
         damage = initialDamage;
         items = itemData;
-        camForward = trueDirection;
+        path = trueDirection;
+        cameraShift = camShift;
+        pierceCount = pierceCountStart;
+        papi = daddy;
     }
 
     // Gets called when the projectile hits anything in raycastLayerMask
@@ -62,24 +67,34 @@ public class CustomProjectile : MonoBehaviour
     }
 
 #region Item Effects
-    private int pierceCount = 0;
+    
     [SerializeField] private float penetrationShift = 0.5f;
     [SerializeField] private float pierceDamageMultiplier = 0.5f;
+    [SerializeField] private GameObject customProjectilePrefab;
     private void CheckPierce()
     {
         pierceCount++;
         damage = damage + initialDamage*pierceDamageMultiplier;
-        if (pierceCount > items.penetrators) 
-        {
-            StopAllCoroutines();
-            StartCoroutine(DestroyProjectile());
-        }
-        else
+        if (pierceCount <= items.penetrators) 
         {
             transform.position += transform.forward * penetrationShift;
-            transform.LookAt(transform.position + camForward, transform.up); // too lazy to find the right function
-            hitSomething = false;
+            // transform.LookAt(transform.position + camForward, transform.up); // too lazy to find the right function
+            // hitSomething = false;
+            for (int i = 0; i < items.splitters+1; i++) {
+                Vector3 newPath = path.normalized-transform.right*cameraShift*i + transform.right*cameraShift*items.splitters/2;
+                Quaternion rot = Quaternion.LookRotation(newPath, Vector3.up);
+                GameObject vfx = Instantiate(customProjectilePrefab, transform.position, rot);
+                CustomProjectile projectile = vfx.GetComponent<CustomProjectile>();
+                projectile.isLocalPlayer = isLocalPlayer;
+                projectile.owner = GetComponent<PlayerSetup>();
+                projectile.SetProjectileData(damage, newPath, items, cameraShift, pierceCount, this);
+            }
+
+        } else {
+            StartCoroutine(DestroyProjectile());
         }
+        this.gameObject.SetActive(false);
+        StopAllCoroutines();
     }
 
     [SerializeField] private float explosionDamageMultiplier = 0.5f;
@@ -99,11 +114,16 @@ public class CustomProjectile : MonoBehaviour
 
 #endregion
 
-    private IEnumerator DestroyProjectile()
+    public IEnumerator DestroyProjectile()
     {
         meshes.SetActive(false);
+        if (papi != null) {
+            StartCoroutine(papi.DestroyProjectile());
+        }
         yield return new WaitForSeconds(trailRenderer.time);
-        Destroy(this.gameObject);
+        if (this.gameObject != null) {
+            Destroy(this.gameObject);
+        }
     }
 
     private IEnumerator SelfDestruct() 
