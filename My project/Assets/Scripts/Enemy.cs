@@ -23,6 +23,7 @@ public class Enemy : NetworkBehaviour
     public float health = 100f;
     [SerializeField] private float pointWorth = 1;
     public float playerHeight = 1f;
+    [SerializeField] private float deathDelayTime = 1f;
 
     private void Start()
     {
@@ -87,7 +88,6 @@ public class Enemy : NetworkBehaviour
     {
         health -= damage;
         healthBar.SetDamage(damage, health / maxHealth);
-        //healthBar.SetProgress(health / maxHealth);
 
         if (health <= 0.0f) 
         {
@@ -100,9 +100,8 @@ public class Enemy : NetworkBehaviour
         {
             canMove = false;
         }
-        //Destroy(healthBar.gameObject);
         
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(deathDelayTime);
 
         if (isServer)
         {  
@@ -113,7 +112,10 @@ public class Enemy : NetworkBehaviour
 
     private void OnDestroy()
     {
-        Destroy(healthBar.gameObject);
+        if (healthBar != null) // just in case i guess
+        {
+            Destroy(healthBar.gameObject);
+        }
     }
     #endregion
 }

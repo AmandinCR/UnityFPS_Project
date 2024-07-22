@@ -11,8 +11,8 @@ public class EnemyProjectile : MonoBehaviour
     [SerializeField] private Rigidbody rb;
     [SerializeField] private Collider projectileCol;
     [SerializeField] private float timeToDestroy;
-    [SerializeField] private TrailRenderer trailRenderer;
     [SerializeField] private GameObject meshes;
+    [SerializeField] private float trailDelayTime = 0.1f;
 
     private void Awake() 
     {
@@ -79,7 +79,7 @@ public class EnemyProjectile : MonoBehaviour
     {
         rb.velocity = Vector3.zero;
         meshes.SetActive(false);
-        yield return new WaitForSeconds(2 * trailRenderer.time);
+        yield return new WaitForSeconds(trailDelayTime);
         Destroy(this.gameObject);
     }
 }
