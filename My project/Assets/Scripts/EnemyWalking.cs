@@ -143,6 +143,7 @@ public class EnemyWalking : NetworkBehaviour
         // only dash if we found a place to dash to
         if (endPosition != startingPosition)
         {
+            
             agent.enabled = false;
             enemy.canMove = false;
             enemy.ChangeAttackState(EnemyAttackState.Dash);
@@ -168,7 +169,8 @@ public class EnemyWalking : NetworkBehaviour
         // destination is set manually elsewhere unless following player for optimization
         if (followingPlayer)
         {
-            agent.destination = enemy.target.transform.position;
+            if (agent.enabled)
+                agent.destination = enemy.target.transform.position;
         }
     }
 
@@ -190,7 +192,8 @@ public class EnemyWalking : NetworkBehaviour
 
     private void Engage()
     {
-        agent.isStopped = false;
+        if (agent.enabled)
+            agent.isStopped = false;
         disengageTimer = 0f;
         if (enemy.currentState != EnemyState.Chase)
         {
@@ -227,12 +230,14 @@ public class EnemyWalking : NetworkBehaviour
         {
             followingPlayer = false;
             float radius = Random.Range(minChaseShift, maxChaseShift);
-            agent.destination = PickSpotNearPlayer(radius);
+            if (agent.enabled)
+                agent.destination = PickSpotNearPlayer(radius);
         }
         else
         {
             float radius = Random.Range(minPatrolShift, maxPatrolShift);
-            agent.destination = PickSpotNearEnemy(radius);
+            if (agent.enabled)
+                agent.destination = PickSpotNearEnemy(radius);
         }
     }
 #endregion
@@ -265,7 +270,8 @@ public class EnemyWalking : NetworkBehaviour
     {
         // stop moving but don't stop agent so he can still patrol
         followingPlayer = false;
-        agent.destination = transform.position;
+        if (agent.enabled)
+            agent.destination = transform.position;
 
         enemy.ChangeState(EnemyState.Idle);
         disengageTimer = 0f;
@@ -299,7 +305,8 @@ public class EnemyWalking : NetworkBehaviour
 
         // calculate new position to move to
         float radius = Random.Range(minPatrolShift, maxPatrolShift);
-        agent.destination = PickSpotNearEnemy(radius);
+        if (agent.enabled)
+            agent.destination = PickSpotNearEnemy(radius);
     }
 #endregion
 
