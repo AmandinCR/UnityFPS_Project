@@ -517,8 +517,8 @@ MonoBehaviour:
   syncInterval: 0
   penetrators: 0
   exploders: 0
-  splitters: 0
-  bouncers: 0
+  splitters: 2
+  bouncers: 1
 --- !u!114 &-775770431532290274
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -534,10 +534,12 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  velocityFOVChange: 8
-  fastFOV: 90
-  slowFOV: 70
-  fovTransitionSpeed: 0.4
+  maxVelocityFOV: 8
+  minVelocityFOV: 6
+  maxFOVChange: 15
+  baseFOV: 80
+  fovTransitionSpeed: 100
+  epsilonforFOVChange: 10
 --- !u!1 &4670978447204931409
 GameObject:
   m_ObjectHideFlags: 0
