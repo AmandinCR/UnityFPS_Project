@@ -58,7 +58,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.78431374}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -339,13 +339,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damageNumberText: {fileID: 7064850675351550392}
+  textTimeToDissapear: 1
+  textTimeBeforeAlpha: 2
   InstantFillImage: {fileID: 7527045056573031475}
   SlowFillImage: {fileID: 2641045714121690109}
   DefaultSpeed: 4
   ColorGradient:
     serializedVersion: 2
-    key0: {r: 1, g: 0.7176471, b: 0.22352941, a: 1}
-    key1: {r: 1, g: 0.7176471, b: 0.22352941, a: 1}
+    key0: {r: 1, g: 1, b: 1, a: 1}
+    key1: {r: 1, g: 1, b: 1, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
@@ -463,7 +465,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0.7185801, b: 0.2216981, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

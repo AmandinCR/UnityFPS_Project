@@ -13,11 +13,38 @@ public class ProgressBar : MonoBehaviour
     
 #region Custom
     [SerializeField] private TextMeshProUGUI damageNumberText;
+    [SerializeField] private float textTimeToDissapear = 1f;
+    [SerializeField] private float textTimeBeforeAlpha = 2f;
+    private float alphaTimer = 0f;
+    private float accumulatedDamage = 0f;
 
     public void SetDamage(float damage, float progress)
     {
-        damageNumberText.text = damage.ToString();
+        accumulatedDamage += damage;
+        damageNumberText.text = accumulatedDamage.ToString();
+        damageNumberText.alpha = 255f;
+        alphaTimer = textTimeBeforeAlpha + textTimeToDissapear;
         SetProgress(progress, DefaultSpeed);
+    }
+
+    private void FixedUpdate()
+    {
+        if (alphaTimer > 0f)
+        {
+            alphaTimer -= Time.fixedDeltaTime;
+        }
+
+        if (alphaTimer < 0f)
+        {
+            alphaTimer = 0f;
+            accumulatedDamage = 0f;
+        }
+
+        if (alphaTimer < textTimeToDissapear)
+        {
+            damageNumberText.alpha = 255 * alphaTimer / textTimeToDissapear;
+        }
+        
     }
 #endregion
 
