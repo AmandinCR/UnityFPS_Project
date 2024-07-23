@@ -21,7 +21,7 @@ public class ProgressBar : MonoBehaviour
     public void SetDamage(float damage, float progress)
     {
         accumulatedDamage += damage;
-        damageNumberText.text = "[ " + accumulatedDamage.ToString() + " ]";
+        damageNumberText.text = "[ " + Mathf.Round(accumulatedDamage).ToString() + " ]";
         damageNumberText.alpha = 255f;
         alphaTimer = textTimeBeforeAlpha + textTimeToDissapear;
         SetProgress(progress, DefaultSpeed);
