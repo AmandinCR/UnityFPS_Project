@@ -11,12 +11,12 @@ public class CustomProjectile : MonoBehaviour
 #region Variables
     [SerializeField] private LayerMask raycastLayerMask;
     [SerializeField] private bool fixedUpdateVisual = false;
-    [SerializeField] private TrailRenderer trailRenderer;
     [SerializeField] private GameObject meshes;
     
     [Header("Bullet Properties")]
     [SerializeField] private float selfDestructTime = 5f;
     [SerializeField] private float bulletSpeed = 1f;
+    [SerializeField] private float delayDestroyTime = 0.1f;
     
     private float initialDamage;
     private float damage;
@@ -157,7 +157,7 @@ public class CustomProjectile : MonoBehaviour
     public IEnumerator DestroyProjectile()
     {
         meshes.SetActive(false);
-        yield return new WaitForSeconds(trailRenderer.time);
+        yield return new WaitForSeconds(delayDestroyTime);
         Destroy(this.gameObject);
     }
 

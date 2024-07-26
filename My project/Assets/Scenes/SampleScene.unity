@@ -5184,7 +5184,7 @@ Transform:
   m_GameObject: {fileID: 1347655993}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.1, y: -0.1, z: 0}
+  m_LocalPosition: {x: 0.3, y: -0.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7444,9 +7444,9 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  enemyPrefab: {fileID: 4511201160075575705, guid: 3dcf62ddf03d7f74eb1ac9320cf5cd4a,
+  enemyPrefab: {fileID: 4511201160075575705, guid: 37df8c119b21dfb4fb6692a633aca201,
     type: 3}
-  enemyCount: 0
+  enemyCount: 1
   spawningTransforms:
   - {fileID: 8082020227291037525}
   - {fileID: 2004214772}
@@ -7454,7 +7454,7 @@ MonoBehaviour:
   spawned: 0
   enemiesAlive: 0
   spawnCooldown: 5
-  spawnWaves: 0
+  spawnWaves: 1
 --- !u!1 &2178175128136710666
 GameObject:
   m_ObjectHideFlags: 0
