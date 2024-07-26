@@ -23,7 +23,7 @@ public class EnemyWalking : NetworkBehaviour
 
     [Header("Aggresivness, must sum to less than 1")]
     [SerializeField] private float followPercent = 0.5f; // 0 to 1 float
-    [SerializeField] private float getClosePercent = 0.8f; // 0 to 1 float
+    [SerializeField] private float getClosePercent = 0.3f; // 0 to 1 float
 
     [Header("Chase")]
     [SerializeField] private float minChaseShift = 3f;

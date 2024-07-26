@@ -28,7 +28,6 @@ public class EnemyShoot : NetworkBehaviour
     [SerializeField] private float shootCooldown;
     [SerializeField] private int magSize;
     [SerializeField] private float fireRate;
-    [SerializeField] private float attackRange;
     [SerializeField] private Transform vfxStart;
     [SerializeField] private float maxVelocityTrackingMultiplier = 1f;
     [SerializeField] private float maxVelocityToTrack = 1f;
@@ -54,13 +53,24 @@ public class EnemyShoot : NetworkBehaviour
         currentAmmo = magSize;
         enemy = GetComponent<Enemy>();
         motor = GetComponent<EnemyMotor>();
+
+        // just in case
+        if (!canLaser)
+        {
+            laserPercent = 0.0f;
+        }
+        if (!canShoot)
+        {
+            laserPercent = 1.0f;
+        }
     }
 
     // RUNS ONLY ON SERVER
     [ServerCallback]
     private void FixedUpdate()
     {
-        CheckShoot();
+        if (canLaser || canShoot)
+            CheckShoot();
     }
 
     // RUNS ONLY ON SERVER

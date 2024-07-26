@@ -20,7 +20,7 @@ public class Enemy : NetworkBehaviour
 
     [Header("Parameters")]
     [SerializeField] private float maxHealth = 100f;
-    public float health = 100f;
+    public float health;
     [SerializeField] private float pointWorth = 1;
     public float playerHeight = 1f;
     [SerializeField] private float deathDelayTime = 1f;
