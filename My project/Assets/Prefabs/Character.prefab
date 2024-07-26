@@ -397,7 +397,7 @@ MonoBehaviour:
     m_Bits: 449
   damage: 20
   maxRaycastDistance: 50
-  shotCooldown: 0.1
+  shotCooldown: 0.3
   canShoot: 1
   projectilePrefab: {fileID: 3463209286390618529, guid: a6412f4ed6066bd42ab7df7bf4c95bb6,
     type: 3}

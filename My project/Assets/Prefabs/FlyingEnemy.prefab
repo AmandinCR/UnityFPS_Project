@@ -315,9 +315,9 @@ MonoBehaviour:
   laserCooldown: 10
   laserDuration: 3
   laserDamage: 1
-  laserTickRate: 0.5
+  laserTickRate: 0.2
   laserPercent: 0.5
-  laserRotateSpeed: 0.5
+  laserRotateSpeed: 0.2
   canShoot: 1
   stopToShoot: 1
   projectilePrefab: {fileID: 2696809062103121917, guid: d19c97c8ce446fd409b7a8310f317b57,

@@ -115,7 +115,7 @@ public class EnemyShoot : NetworkBehaviour
             Vector3 targetDirection = vfxStart.forward;
             Vector3 ourDirection = vfxStart.forward;
             if (enemy.target != null)
-                targetDirection = (enemy.target.transform.position - vfxStart.position).normalized;
+                targetDirection = (enemy.target.transform.position + new Vector3(0,enemy.playerHeight,0) - vfxStart.position).normalized;
             float step = laserRotateSpeed * Time.deltaTime;
             Vector3 newDirection = Vector3.RotateTowards(ourDirection, targetDirection, step, 0.0f);
             motor.LookAtDirection(newDirection);

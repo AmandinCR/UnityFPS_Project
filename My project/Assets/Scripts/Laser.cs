@@ -13,7 +13,7 @@ public class Laser : MonoBehaviour
     private void Start()
     {
         StartCoroutine(SelfDestruct());
-        InvokeRepeating("CheckDamage", 0.0f, laserTickRate);
+        //InvokeRepeating("CheckDamage", laserTickRate, laserTickRate);
     }
 
     private void CheckDamage()
@@ -37,6 +37,7 @@ public class Laser : MonoBehaviour
         damage = dam;
         duration = dur;
         laserTickRate = tick;
+        InvokeRepeating("CheckDamage", 0.0f, laserTickRate);
     }
 
     private IEnumerator SelfDestruct() 
