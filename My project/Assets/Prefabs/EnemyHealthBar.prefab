@@ -35,7 +35,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 2, y: 0.1}
+  m_SizeDelta: {x: 2, y: 0.05}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1466687869018252373
 CanvasRenderer:
@@ -110,7 +110,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 2, y: 0.1}
+  m_SizeDelta: {x: 2, y: 0.05}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1168294519117395327
 CanvasRenderer:
@@ -340,7 +340,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damageNumberText: {fileID: 7064850675351550392}
   textTimeToDissapear: 0.5
-  textTimeBeforeAlpha: 2
+  textTimeBeforeAlpha: 1
   InstantFillImage: {fileID: 7527045056573031475}
   SlowFillImage: {fileID: 2641045714121690109}
   DefaultSpeed: 4
@@ -442,7 +442,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 2, y: 0.1}
+  m_SizeDelta: {x: 2, y: 0.05}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4138576073381436087
 CanvasRenderer:
