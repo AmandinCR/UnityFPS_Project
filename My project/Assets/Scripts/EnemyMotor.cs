@@ -13,7 +13,7 @@ public class EnemyMotor : NetworkBehaviour
     [SerializeField] private LayerMask chaseLineOfSightMask;
     [SerializeField] private float proximityChaseDistance = 4f;
     //[SerializeField] private float dotProdAngle = -1.0f;
-    [SerializeField] private Transform head;
+    [SerializeField] public Transform head;
 
 
     public void LookAtPosition(Vector3 pos)

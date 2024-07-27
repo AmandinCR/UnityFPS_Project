@@ -137,7 +137,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.74
-  m_Speed: 3.5
+  m_Speed: 1
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 360
@@ -292,7 +292,8 @@ MonoBehaviour:
   shootCooldown: 5
   magSize: 1
   fireRate: 0.2
-  vfxStart: {fileID: 5096670907719816196}
+  vfxStarts:
+  - {fileID: 5096670907719816196}
   maxVelocityTrackingMultiplier: 0.8
   maxVelocityToTrack: 5
 --- !u!1 &4602891124597048936

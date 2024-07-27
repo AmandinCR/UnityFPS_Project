@@ -8,29 +8,37 @@ using Mirror.Examples.Basic;
 
 public class EnemyShoot : NetworkBehaviour
 {
+    public enum ShotType{
+        None,
+        Projectile,
+        Laser
+    }
+
+    [Header("Behaviour")]
+    public ShotType shotType = ShotType.None;
+    [SerializeField] private bool stopToShoot = false;
+
+
     [Header("Laser")]
-    public bool canLaser = true;
-    [SerializeField] private bool stopToLaser = false;
     [SerializeField] private GameObject laserPrefab;
     [SerializeField] private float laserCooldown;
     [SerializeField] private float laserDuration;
     [SerializeField] private float laserDamage;
     [SerializeField] private float laserTickRate;
-    [SerializeField] private float laserPercent = 0.5f;
     [SerializeField] private float laserRotateSpeed = 1f;
 
     [Header("Projectiles")]
-    public bool canShoot = true;
-    [SerializeField] private bool stopToShoot = false;
     [SerializeField] private GameObject projectilePrefab;
     [SerializeField] private float shootDamage;
     [SerializeField] private float spawnForce;
     [SerializeField] private float shootCooldown;
     [SerializeField] private int magSize;
     [SerializeField] private float fireRate;
-    [SerializeField] private Transform vfxStart;
     [SerializeField] private float maxVelocityTrackingMultiplier = 1f;
     [SerializeField] private float maxVelocityToTrack = 1f;
+
+    [Header("Other")]
+    [SerializeField] private List<Transform> vfxStarts = new List<Transform>();
     private int currentAmmo;
     private float attackTimer = 0f;
     private Enemy enemy;
@@ -53,23 +61,13 @@ public class EnemyShoot : NetworkBehaviour
         currentAmmo = magSize;
         enemy = GetComponent<Enemy>();
         motor = GetComponent<EnemyMotor>();
-
-        // just in case
-        if (!canLaser)
-        {
-            laserPercent = 0.0f;
-        }
-        if (!canShoot)
-        {
-            laserPercent = 1.0f;
-        }
     }
 
     // RUNS ONLY ON SERVER
     [ServerCallback]
     private void FixedUpdate()
     {
-        if (canLaser || canShoot)
+        if (shotType != ShotType.None)
             CheckShoot();
     }
 
@@ -92,19 +90,13 @@ public class EnemyShoot : NetworkBehaviour
         }
     }
 
+    // RUNS ONLY ON SERVER
     private void PickAttack()
     {
-        float attackValue = Random.value;
-        if (attackValue < laserPercent)
-        {
-            if (canLaser)
-                StartCoroutine(ServerLaser());
-        }
-        else
-        {
-            if (canShoot)
-                StartCoroutine(ServerShoot());
-        }
+        if (shotType == ShotType.Projectile)
+            StartCoroutine(ServerShoot());
+        else if (shotType == ShotType.Laser)
+            StartCoroutine(ServerLaser());
     }
 
     #region Laser
@@ -114,7 +106,7 @@ public class EnemyShoot : NetworkBehaviour
         enemy.ChangeAttackState(EnemyAttackState.Shoot);
         attackTimer = laserCooldown;
         RpcLaser(); // technically should avoid passing gameobjects as reference
-        if (stopToLaser)
+        if (stopToShoot)
         {
             enemy.canMove = false;
         }
@@ -122,10 +114,10 @@ public class EnemyShoot : NetworkBehaviour
         float time = 0f;
         while (time < laserDuration)
         {
-            Vector3 targetDirection = vfxStart.forward;
-            Vector3 ourDirection = vfxStart.forward;
+            Vector3 targetDirection = motor.head.forward;
+            Vector3 ourDirection = motor.head.forward;
             if (enemy.target != null)
-                targetDirection = (enemy.target.transform.position + new Vector3(0,enemy.playerHeight,0) - vfxStart.position).normalized;
+                targetDirection = (enemy.target.transform.position + new Vector3(0,enemy.playerHeight,0) - motor.head.position).normalized;
             float step = laserRotateSpeed * Time.deltaTime;
             Vector3 newDirection = Vector3.RotateTowards(ourDirection, targetDirection, step, 0.0f);
             motor.LookAtDirection(newDirection);
@@ -148,8 +140,12 @@ public class EnemyShoot : NetworkBehaviour
     // RUNS ONLY ON CLIENTS
     private void Laser()
     {
-        GameObject vfx = Instantiate(laserPrefab, vfxStart.position, vfxStart.rotation, vfxStart);
-        vfx.GetComponent<Laser>().SetProjectileData(laserDamage, laserDuration, laserTickRate);
+        for (int i = 0; i < vfxStarts.Count; i++)
+        {
+            GameObject vfx = Instantiate(laserPrefab, vfxStarts[i].position, vfxStarts[i].rotation, vfxStarts[i]);
+            vfx.GetComponent<Laser>().SetProjectileData(laserDamage, laserDuration, laserTickRate);
+        }
+        
     }
     #endregion
 
@@ -174,6 +170,7 @@ public class EnemyShoot : NetworkBehaviour
         enemy.ChangeAttackState(EnemyAttackState.Idle);
     }
 
+    // RUNS ONLY ON SERVER
     private void CalculateShoot()
     {
         currentAmmo--;
@@ -182,7 +179,7 @@ public class EnemyShoot : NetworkBehaviour
             CancelInvoke(); // still runs through rest of function
         }
 
-        Quaternion shootRotation = vfxStart.rotation;
+        Quaternion shootRotation = motor.head.rotation;
         if (enemy.target != null) // just in case
         {
             Vector3 playerVelocity = enemy.target.GetComponent<PlayerSetup>().velocity;
@@ -191,9 +188,9 @@ public class EnemyShoot : NetworkBehaviour
             {
                 playerVelocity = playerVelocity.normalized * maxVelocityToTrack;
             }
-            Vector3 playerDirection = enemy.target.transform.position + new Vector3(0,enemy.playerHeight,0) - vfxStart.position;
+            Vector3 playerDirection = enemy.target.transform.position + new Vector3(0,enemy.playerHeight,0) - motor.head.position;
             Vector3 shootDirection = playerDirection + playerVelocity * velocityTracking;// * playerDirection.magnitude;
-            shootRotation = Quaternion.LookRotation(shootDirection, vfxStart.up);
+            shootRotation = Quaternion.LookRotation(shootDirection, motor.head.up);
         }
         RpcShoot(shootRotation);
     }
@@ -210,8 +207,11 @@ public class EnemyShoot : NetworkBehaviour
     private void LaunchProjectile()
     {
         // KinematicCharacterMotor is disabled on remote clients
-        GameObject vfx = Instantiate(projectilePrefab, vfxStart.position, shootRotation);
-        vfx.GetComponent<EnemyProjectile>().SetProjectileData(shootDamage, spawnForce);
+        for (int i = 0; i < vfxStarts.Count; i++)
+        {
+            GameObject vfx = Instantiate(projectilePrefab, vfxStarts[i].position, shootRotation);
+            vfx.GetComponent<EnemyProjectile>().SetProjectileData(shootDamage, spawnForce);
+        }
     }
     #endregion
 }

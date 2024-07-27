@@ -256,7 +256,8 @@ MonoBehaviour:
   shootCooldown: 5
   magSize: 1
   fireRate: 0.2
-  vfxStart: {fileID: 7864068137925484241}
+  vfxStarts:
+  - {fileID: 7864068137925484241}
   maxVelocityTrackingMultiplier: 0.8
   maxVelocityToTrack: 5
 --- !u!114 &4103536192725297692

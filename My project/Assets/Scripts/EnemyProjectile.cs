@@ -9,21 +9,14 @@ public class EnemyProjectile : MonoBehaviour
     private float spawnForce = 0f;
 
     [SerializeField] private Rigidbody rb;
-    [SerializeField] private Collider projectileCol;
     [SerializeField] private float timeToDestroy;
     [SerializeField] private GameObject meshes;
     [SerializeField] private float trailDelayTime = 0.1f;
-
-    private void Awake() 
-    {
-        projectileCol.enabled = false;
-    }
 
 
     private void Start()
     {
         //Physics.IgnoreCollision(projectileCol, playerCol);
-        projectileCol.enabled = true;
         rb.AddForce(transform.forward * spawnForce);
         StartCoroutine(SelfDestruct(timeToDestroy));
     }
