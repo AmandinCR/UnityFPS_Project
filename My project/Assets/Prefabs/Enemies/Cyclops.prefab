@@ -164,6 +164,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  maxHealth: 200
   healthBar: {fileID: 426043217635282214}
   target: {fileID: 0}
   enemyManager: {fileID: 0}
@@ -171,11 +172,9 @@ MonoBehaviour:
   currentAttackState: 0
   canSeeTarget: 0
   canMove: 1
-  maxHealth: 150
-  health: 100
-  pointWorth: 1
-  playerHeight: 1
   deathDelayTime: 1
+  health: 100
+  playerHeight: 1
 --- !u!114 &4417391556647428425
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -191,23 +190,24 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  minGetCloseToPlayerDistance: 40
+  chanceToFollow: 0.4
+  chanceToGetClose: 0.3
+  chanceToStayAway: 0.3
+  minNearPlayerRadius: 3
+  maxNearPlayerRadius: 6
+  minNearEnemyRadius: 3
+  maxNearEnemyRadius: 6
+  pickChaseSpotCooldown: 20
+  canRetreatDash: 0
+  canAttackDash: 0
   walkLineOfSightMask:
     serializedVersion: 2
     m_Bits: 1
-  minFollowPlayerDistance: 40
   navMeshRadiusCheck: 2
   disengageTime: 10
-  followPercent: 0
-  getClosePercent: 0.4
-  minChaseShift: 10
-  maxChaseShift: 15
-  pickChaseSpotCooldown: 15
   canPatrol: 0
-  minPatrolShift: 5
-  maxPatrolShift: 10
   pickPatrolSpotCooldown: 10
-  canRetreatDash: 0
-  canAttackDash: 0
   dashToPlayerShift: 3
   dashNearEnemyShift: 3
   dashSpeed: 3
@@ -273,18 +273,15 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  canLaser: 1
-  stopToLaser: 1
+  shotType: 2
+  stopToShoot: 0
   laserPrefab: {fileID: 1553325915567638451, guid: 662d3ed96da60d14f82007ef39971250,
     type: 3}
   laserCooldown: 10
-  laserDuration: 2
-  laserDamage: 1
+  laserDuration: 4
+  laserDamage: 2
   laserTickRate: 0.2
-  laserPercent: 1
   laserRotateSpeed: 0.2
-  canShoot: 0
-  stopToShoot: 0
   projectilePrefab: {fileID: 2696809062103121917, guid: d19c97c8ce446fd409b7a8310f317b57,
     type: 3}
   shootDamage: 5
@@ -292,10 +289,10 @@ MonoBehaviour:
   shootCooldown: 5
   magSize: 1
   fireRate: 0.2
-  vfxStarts:
-  - {fileID: 5096670907719816196}
   maxVelocityTrackingMultiplier: 0.8
   maxVelocityToTrack: 5
+  vfxStarts:
+  - {fileID: 5096670907719816196}
 --- !u!1 &4602891124597048936
 GameObject:
   m_ObjectHideFlags: 0

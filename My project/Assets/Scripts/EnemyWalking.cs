@@ -7,6 +7,19 @@ using Mirror;
 
 public class EnemyWalking : NetworkBehaviour
 {
+    [Header("Behaviour")]
+    [SerializeField] private float minGetCloseToPlayerDistance;
+    [SerializeField] private float chanceToFollow = 0.5f; // 0 to 1 float
+    [SerializeField] private float chanceToGetClose = 0.3f; // 0 to 1 float
+    [SerializeField] private float chanceToStayAway = 0.3f; // 0 to 1 float
+    [SerializeField] private float minNearPlayerRadius = 3f;
+    [SerializeField] private float maxNearPlayerRadius = 6f;
+    [SerializeField] private float minNearEnemyRadius = 3f;
+    [SerializeField] private float maxNearEnemyRadius = 6f;
+    [SerializeField] private float pickChaseSpotCooldown = 10f;
+    public bool canRetreatDash = true;
+    public bool canAttackDash = true;
+
     [Header("References")]
     private Enemy enemy;
     private NavMeshAgent agent;
@@ -14,33 +27,21 @@ public class EnemyWalking : NetworkBehaviour
 
     [Header("Other")]
     [SerializeField] private LayerMask walkLineOfSightMask;
-    [SerializeField] private float minFollowPlayerDistance;
     [SerializeField] private float navMeshRadiusCheck = 2.0f;
 
     [Header("Disengage")]
     [SerializeField] private float disengageTime = 1.0f;
     private float disengageTimer;
 
-    [Header("Aggresivness, must sum to less than 1")]
-    [SerializeField] private float followPercent = 0.5f; // 0 to 1 float
-    [SerializeField] private float getClosePercent = 0.3f; // 0 to 1 float
-
     [Header("Chase")]
-    [SerializeField] private float minChaseShift = 3f;
-    [SerializeField] private float maxChaseShift = 6f;
-    [SerializeField] private float pickChaseSpotCooldown = 10f;
     private float pickSpotTimer;
     private bool followingPlayer = false;
 
     [Header("Patrol")]
     [SerializeField] private bool canPatrol = false;
-    [SerializeField] private float minPatrolShift = 3f;
-    [SerializeField] private float maxPatrolShift = 6f;
     [SerializeField] private float pickPatrolSpotCooldown = 10f;
 
     [Header("Dash")]
-    public bool canRetreatDash = true;
-    public bool canAttackDash = true;
     [SerializeField] private float dashToPlayerShift = 2f;
     [SerializeField] private float dashNearEnemyShift = 10f;
     [SerializeField] private float dashSpeed = 1f;
@@ -211,9 +212,11 @@ public class EnemyWalking : NetworkBehaviour
 
         // if player is far away then just go to him first
         Vector3 playerDistance = enemy.target.transform.position - transform.position;
-        if (playerDistance.magnitude > minFollowPlayerDistance)
+        if (playerDistance.magnitude > minGetCloseToPlayerDistance)
         {
-            followingPlayer = true;
+            float radius = Random.Range(minNearPlayerRadius, maxNearPlayerRadius);
+            if (agent.enabled)
+                agent.destination = PickSpotNearPlayer(radius);
             return;
         }
 
@@ -222,22 +225,26 @@ public class EnemyWalking : NetworkBehaviour
         // 2. move close to player
         // 3. move close to ourselves
         float aggroValue = Random.value;
-        if (aggroValue < followPercent)
+        if (aggroValue < chanceToFollow)
         {
             followingPlayer = true;
         }
-        else if (aggroValue < followPercent + getClosePercent)
+        else if (aggroValue < chanceToFollow + chanceToGetClose)
         {
             followingPlayer = false;
-            float radius = Random.Range(minChaseShift, maxChaseShift);
+            float radius = Random.Range(minNearPlayerRadius, maxNearPlayerRadius);
             if (agent.enabled)
                 agent.destination = PickSpotNearPlayer(radius);
         }
-        else
+        else if (aggroValue < chanceToFollow + chanceToGetClose + chanceToStayAway)
         {
-            float radius = Random.Range(minPatrolShift, maxPatrolShift);
+            float radius = Random.Range(minNearEnemyRadius, maxNearEnemyRadius);
             if (agent.enabled)
                 agent.destination = PickSpotNearEnemy(radius);
+        }
+        else
+        {
+            return;
         }
     }
 #endregion
@@ -304,7 +311,7 @@ public class EnemyWalking : NetworkBehaviour
         pickSpotTimer = 0f;
 
         // calculate new position to move to
-        float radius = Random.Range(minPatrolShift, maxPatrolShift);
+        float radius = Random.Range(minNearEnemyRadius, maxNearEnemyRadius);
         if (agent.enabled)
             agent.destination = PickSpotNearEnemy(radius);
     }

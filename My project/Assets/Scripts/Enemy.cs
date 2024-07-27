@@ -7,6 +7,9 @@ using UnityEngine.AI;
 
 public class Enemy : NetworkBehaviour
 {
+    [Header("Behaviour")]
+    [SerializeField] private float maxHealth = 100f;
+
     [Header("References")]
     [SerializeField] private ProgressBar healthBar;
     [HideInInspector] public GameObject target;
@@ -19,11 +22,9 @@ public class Enemy : NetworkBehaviour
     public bool canMove = true;
 
     [Header("Parameters")]
-    [SerializeField] private float maxHealth = 100f;
-    public float health;
-    [SerializeField] private float pointWorth = 1;
-    public float playerHeight = 1f;
     [SerializeField] private float deathDelayTime = 1f;
+    [HideInInspector] public float health;
+    public float playerHeight = 1f;
 
     private void Start()
     {
@@ -67,11 +68,6 @@ public class Enemy : NetworkBehaviour
     public void TakeDamage(PlayerSetup player, float damage) 
     {
         if (health <= 0.0f) { return;}
-
-        if (health - damage <= 0.0f) 
-        {
-            player.points += pointWorth;
-        }
         CmdTakeDamage(damage);
     }
 

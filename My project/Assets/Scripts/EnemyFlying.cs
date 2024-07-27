@@ -6,6 +6,19 @@ using UnityEngine;
 
 public class EnemyFlying : NetworkBehaviour
 {
+    [Header("Behaviour")]
+    [SerializeField] private float minGetCloseToPlayerDistance = 40f;
+    [SerializeField] private float chanceToGetClose = 0.5f; // 0 to 1 float
+    [SerializeField] private float chanceToStayAway = 0.5f; // 0 to 1 float
+    [SerializeField] private float minNearPlayerRadius = 3f;
+    [SerializeField] private float maxNearPlayerRadius = 6f;
+    [SerializeField] private float minNearEnemyRadius = 3f;
+    [SerializeField] private float maxNearEnemyRadius = 6f;
+    [SerializeField] private float chaseSpeed = 2f;
+    [SerializeField] private float pickChaseSpotCooldown = 2f;
+    [SerializeField] private bool canRetreatDash = true;
+    [SerializeField] private bool canAttackDash = true;
+
     [Header("References")]
     [SerializeField] private Rigidbody rb;
     private Enemy enemy;
@@ -15,33 +28,19 @@ public class EnemyFlying : NetworkBehaviour
     [SerializeField] private float checkTerrainRadius = 0.1f;
     [SerializeField] private LayerMask flyLineOfSightMask;
     [SerializeField] private float flyLocationEpsilon = 0.5f;
-    [SerializeField] private float minFollowPlayerDistance = 40f;
 
     [Header("Disengage")]
-    private float disengageTimer;
     [SerializeField] private float disengageTime = 1.0f;
-
-    [Header("Aggresivness, must sum to less than 1")]
-    [SerializeField] private float getClosePercent = 0.5f;
-
-    [Header("Chase")]
-    [SerializeField] private float minChaseShift = 3f;
-    [SerializeField] private float maxChaseShift = 6f;
-    [SerializeField] private float chaseSpeed = 2f;
+    private float disengageTimer;
     private float pickSpotTimer;
 
     [Header("Patrol")]
     [SerializeField] private bool canPatrol = false;
-    [SerializeField] private float minPatrolShift = 3f;
-    [SerializeField] private float maxPatrolShift = 6f;
     [SerializeField] private float pickPatrolSpotCooldown = 10f;
     [SerializeField] private float patrolSpeed = 1f;
-    [SerializeField] private float pickChaseSpotCooldown = 2f;
     private Vector3 flyLocation;
 
     [Header("Dash")]
-    public bool canRetreatDash = true;
-    public bool canAttackDash = true;
     [SerializeField] private float dashToPlayerShift = 2f;
     [SerializeField] private float dashNearEnemyShift = 10f;
     [SerializeField] private float dashSpeed = 1f;
@@ -209,9 +208,9 @@ public class EnemyFlying : NetworkBehaviour
 
         // if player is far away then just go to him first
         Vector3 playerDistance = enemy.target.transform.position - transform.position;
-        if (playerDistance.magnitude > minFollowPlayerDistance)
+        if (playerDistance.magnitude > minGetCloseToPlayerDistance)
         {
-            float radius = Random.Range(minChaseShift, maxChaseShift);
+            float radius = Random.Range(minNearPlayerRadius, maxNearPlayerRadius);
             flyLocation = PickSpotNearPlayer(radius);
             return;
         }
@@ -220,15 +219,19 @@ public class EnemyFlying : NetworkBehaviour
         // 1. move close to player
         // 2. move close to ourselves
         float aggroValue = Random.value;
-        if (aggroValue < getClosePercent)
+        if (aggroValue < chanceToGetClose)
         {
-            float radius = Random.Range(minChaseShift, maxChaseShift);
+            float radius = Random.Range(minNearPlayerRadius, maxNearPlayerRadius);
             flyLocation = PickSpotNearPlayer(radius);
+        }
+        else if (aggroValue < chanceToGetClose + chanceToStayAway)
+        {
+            float radius = Random.Range(minNearEnemyRadius, maxNearEnemyRadius);
+            flyLocation = PickSpotNearEnemy(radius);
         }
         else
         {
-            float radius = Random.Range(minPatrolShift, maxPatrolShift);
-            flyLocation = PickSpotNearEnemy(radius);
+            return;
         }
     }
 #endregion
@@ -292,7 +295,7 @@ public class EnemyFlying : NetworkBehaviour
         pickSpotTimer = 0f;
 
         // calculate new position to move to
-        float radius = Random.Range(minPatrolShift, maxPatrolShift);
+        float radius = Random.Range(minNearEnemyRadius, maxNearEnemyRadius);
         flyLocation = PickSpotNearEnemy(radius);
         motor.LookAtPosition(flyLocation);
     }

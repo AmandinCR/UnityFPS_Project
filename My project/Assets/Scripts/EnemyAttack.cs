@@ -5,8 +5,11 @@ using UnityEngine;
 
 public class EnemyAttack : NetworkBehaviour
 {
-    public bool canAttack = true;
+    [Header("Behaviour")]
+    [SerializeField] private bool canAttack = true;
     [SerializeField] private bool stopToAttack = false;
+
+    [Header("Parameters")]
     [SerializeField] private float damage;
     [SerializeField] private float cooldown;
     [SerializeField] private float attackRange;
@@ -25,14 +28,13 @@ public class EnemyAttack : NetworkBehaviour
     [ServerCallback]
     private void FixedUpdate() 
     {
-        CheckAttack();
+        if (canAttack)
+            CheckAttack();
     }
 
     // RUNS ONLY ON SERVER
     private void CheckAttack()
     {
-        if (!canAttack) { return;}
-
         if (attackTimer <= 0f) 
         {
             if (enemy.currentAttackState == EnemyAttackState.Idle)

@@ -42,6 +42,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9074157490460077694}
+  - component: {fileID: 1314795938731807862}
   - component: {fileID: 226481180525666226}
   - component: {fileID: 1974063178930173004}
   - component: {fileID: 474621846667277379}
@@ -50,7 +51,6 @@ GameObject:
   - component: {fileID: 2138933734980811291}
   - component: {fileID: 4103536192725297692}
   - component: {fileID: 6768191372809129691}
-  - component: {fileID: 1314795938731807862}
   m_Layer: 8
   m_Name: Bat
   m_TagString: HitBox
@@ -75,6 +75,40 @@ Transform:
   - {fileID: 5439282888096662876}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1314795938731807862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 550363922277451164}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 1
+  syncMode: 0
+  syncInterval: 0
+  target: {fileID: 5439282888096662876}
+  syncPosition: 1
+  syncRotation: 1
+  syncScale: 0
+  onlySyncOnChange: 1
+  compressRotation: 1
+  interpolatePosition: 1
+  interpolateRotation: 1
+  interpolateScale: 1
+  coordinateSpace: 0
+  sendIntervalMultiplier: 1
+  timelineOffset: 0
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  onlySyncOnChangeCorrectionMultiplier: 2
+  rotationSensitivity: 0.01
+  positionPrecision: 0.01
+  scalePrecision: 0.01
 --- !u!114 &226481180525666226
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168,6 +202,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  maxHealth: 125
   healthBar: {fileID: 8025300507421439544}
   target: {fileID: 0}
   enemyManager: {fileID: 0}
@@ -175,11 +210,9 @@ MonoBehaviour:
   currentAttackState: 0
   canSeeTarget: 0
   canMove: 1
-  maxHealth: 150
-  health: 100
-  pointWorth: 1
-  playerHeight: 1
   deathDelayTime: 1
+  health: 100
+  playerHeight: 1
 --- !u!114 &2577367456029125124
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -195,26 +228,27 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  minGetCloseToPlayerDistance: 40
+  chanceToGetClose: 0.5
+  chanceToStayAway: 0.5
+  minNearPlayerRadius: 3
+  maxNearPlayerRadius: 6
+  minNearEnemyRadius: 3
+  maxNearEnemyRadius: 6
+  chaseSpeed: 20
+  pickChaseSpotCooldown: 8
+  canRetreatDash: 0
+  canAttackDash: 1
   rb: {fileID: 474621846667277379}
   checkTerrainRadius: 0.2
   flyLineOfSightMask:
     serializedVersion: 2
     m_Bits: 1
   flyLocationEpsilon: 0.5
-  minFollowPlayerDistance: 40
   disengageTime: 10
-  getClosePercent: 0.5
-  minChaseShift: 3
-  maxChaseShift: 6
-  chaseSpeed: 20
   canPatrol: 0
-  minPatrolShift: 3
-  maxPatrolShift: 6
   pickPatrolSpotCooldown: 10
   patrolSpeed: 5
-  pickChaseSpotCooldown: 2
-  canRetreatDash: 0
-  canAttackDash: 1
   dashToPlayerShift: 3
   dashNearEnemyShift: 3
   dashSpeed: 3
@@ -236,18 +270,15 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  canLaser: 0
-  stopToLaser: 1
+  shotType: 1
+  stopToShoot: 1
   laserPrefab: {fileID: 1553325915567638451, guid: 662d3ed96da60d14f82007ef39971250,
     type: 3}
   laserCooldown: 10
   laserDuration: 3
   laserDamage: 1
   laserTickRate: 0.2
-  laserPercent: 0
   laserRotateSpeed: 0.2
-  canShoot: 1
-  stopToShoot: 1
   projectilePrefab: {fileID: 2696809062103121917, guid: d19c97c8ce446fd409b7a8310f317b57,
     type: 3}
   shootDamage: 5
@@ -255,10 +286,10 @@ MonoBehaviour:
   shootCooldown: 7
   magSize: 3
   fireRate: 0.2
-  vfxStarts:
-  - {fileID: 7864068137925484241}
   maxVelocityTrackingMultiplier: 0.8
   maxVelocityToTrack: 5
+  vfxStarts:
+  - {fileID: 7864068137925484241}
 --- !u!114 &4103536192725297692
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -303,40 +334,6 @@ MonoBehaviour:
   cooldown: 0
   attackRange: 0
   attackDuration: 0
---- !u!114 &1314795938731807862
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 550363922277451164}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8ff3ba0becae47b8b9381191598957c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 1
-  syncMode: 0
-  syncInterval: 0
-  target: {fileID: 5439282888096662876}
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  onlySyncOnChange: 1
-  compressRotation: 1
-  interpolatePosition: 1
-  interpolateRotation: 1
-  interpolateScale: 1
-  coordinateSpace: 0
-  sendIntervalMultiplier: 1
-  timelineOffset: 0
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  onlySyncOnChangeCorrectionMultiplier: 2
-  rotationSensitivity: 0.01
-  positionPrecision: 0.01
-  scalePrecision: 0.01
 --- !u!1 &8989233084849567818
 GameObject:
   m_ObjectHideFlags: 0

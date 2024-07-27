@@ -5,10 +5,11 @@ using UnityEngine;
 
 public class EnemyMotor : NetworkBehaviour
 {
-    private Enemy enemy;
+    [Header("Parameters")]
     [SerializeField] private float farthestPlayerCheck = 100f;
     [SerializeField] private float followDistance = 15.0f;
     [SerializeField] private float findPlayersTime = 1.0f;
+    private Enemy enemy;
 
     [SerializeField] private LayerMask chaseLineOfSightMask;
     [SerializeField] private float proximityChaseDistance = 4f;
