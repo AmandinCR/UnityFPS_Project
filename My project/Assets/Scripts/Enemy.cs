@@ -31,6 +31,17 @@ public class Enemy : NetworkBehaviour
         currentAttackState = EnemyAttackState.Idle;
         health = maxHealth;
         SetupHealthBar();
+        SetLayerAllChildren(this.transform);
+    }
+
+    private void SetLayerAllChildren(Transform root)
+    {
+        var children = root.GetComponentsInChildren<Transform>(includeInactive: true);
+        foreach (var child in children)
+        {
+            // enemy layer i hope...
+            child.gameObject.layer = 8;
+        }
     }
 
     [ServerCallback]

@@ -99,7 +99,7 @@ public class EnemyFlying : NetworkBehaviour
 
         if (enemy.currentState == EnemyState.Chase)
         {
-            transform.LookAt(enemy.target.transform.position + new Vector3(0,enemy.playerHeight,0));
+            motor.LookAtPosition(enemy.target.transform.position + new Vector3(0,enemy.playerHeight,0));
         }
     }
     private void Move()

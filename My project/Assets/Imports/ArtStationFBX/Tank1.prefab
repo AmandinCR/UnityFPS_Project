@@ -500,6 +500,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3166863451009846743}
+  - component: {fileID: 5174279618667701142}
   m_Layer: 0
   m_Name: Tank1
   m_TagString: Untagged
@@ -525,6 +526,27 @@ Transform:
   - {fileID: 6888123884682169016}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &5174279618667701142
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1772702888941519576}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 497
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.3, y: 0.7, z: 1.84}
+  m_Center: {x: 0, y: 0.06, z: 0}
 --- !u!1 &2284219537327173941
 GameObject:
   m_ObjectHideFlags: 0
