@@ -15,15 +15,20 @@ public class EnemyMotor : NetworkBehaviour
     [SerializeField] private float proximityChaseDistance = 4f;
     //[SerializeField] private float dotProdAngle = -1.0f;
     [SerializeField] public Transform head;
+    public float headRotateSpeed = 0.05f;
 
 
+    // SHOULD ONLY BE CALLED IN FIXEDUPDATE
     public void LookAtPosition(Vector3 pos)
     {
-        head.LookAt(pos);
+        Vector3 dir = pos - head.position;
+        LookAtDirection(dir);
     }
 
+    // SHOULD ONLY BE CALLED IN FIXEDUPDATE
     public void LookAtDirection(Vector3 dir)
     {
+        dir = Vector3.RotateTowards(head.forward, dir, headRotateSpeed, 0f);
         head.LookAt(head.position + dir);
     }
 

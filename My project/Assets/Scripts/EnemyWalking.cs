@@ -82,8 +82,8 @@ public class EnemyWalking : NetworkBehaviour
                 agent.isStopped = true;
         }
         UpdateTimers();
-        if (enemy.currentAttackState == EnemyAttackState.Idle)
-            LookAtTarget();
+        //if (enemy.currentAttackState == EnemyAttackState.Idle)
+        LookAtTarget();
     }
 
     private void UpdateTimers()

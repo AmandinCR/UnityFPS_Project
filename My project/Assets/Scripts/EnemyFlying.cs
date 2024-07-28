@@ -75,8 +75,8 @@ public class EnemyFlying : NetworkBehaviour
             CheckDash();
         }
         UpdateTimers();
-        if (enemy.currentAttackState == EnemyAttackState.Idle)
-            LookAtTarget();
+        //if (enemy.currentAttackState == EnemyAttackState.Idle)
+        LookAtTarget();
     }
 
     private void UpdateTimers()

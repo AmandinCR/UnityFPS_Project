@@ -25,7 +25,7 @@ public class EnemyShoot : NetworkBehaviour
     [SerializeField] private float laserDuration;
     [SerializeField] private float laserDamage;
     [SerializeField] private float laserTickRate;
-    [SerializeField] private float laserRotateSpeed = 1f;
+    [SerializeField] private float laserRotateSpeed = 0.01f;
 
     [Header("Projectiles")]
     [SerializeField] private GameObject projectilePrefab;
@@ -111,20 +111,10 @@ public class EnemyShoot : NetworkBehaviour
             enemy.canMove = false;
         }
 
-        float time = 0f;
-        while (time < laserDuration)
-        {
-            Vector3 targetDirection = motor.head.forward;
-            Vector3 ourDirection = motor.head.forward;
-            if (enemy.target != null)
-                targetDirection = (enemy.target.transform.position + new Vector3(0,enemy.playerHeight,0) - motor.head.position).normalized;
-            float step = laserRotateSpeed * Time.deltaTime;
-            Vector3 newDirection = Vector3.RotateTowards(ourDirection, targetDirection, step, 0.0f);
-            motor.LookAtDirection(newDirection);
-
-            time += Time.deltaTime;
-            yield return null;
-        }
+        float oldSpeed = motor.headRotateSpeed;
+        motor.headRotateSpeed = laserRotateSpeed;
+        yield return new WaitForSeconds(laserDuration);
+        motor.headRotateSpeed = oldSpeed;
 
         enemy.canMove = true;
         enemy.ChangeAttackState(EnemyAttackState.Idle);
