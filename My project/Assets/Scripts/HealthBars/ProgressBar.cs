@@ -17,18 +17,37 @@ public class ProgressBar : MonoBehaviour
     [SerializeField] private float textTimeBeforeAlpha = 2f;
     private float alphaTimer = 0f;
     private float accumulatedDamage = 0f;
+    [HideInInspector] public Transform player;
+    [SerializeField] private Image[] barImages = new Image[3];
+
+    /*
+    private void Update()
+    {
+        float distance = (player.position - this.transform.position).magnitude / 10f;
+        transform.localScale = new Vector3(distance,distance,distance);
+    }
+    */
 
     public void SetDamage(float damage, float progress)
     {
         accumulatedDamage += damage;
         damageNumberText.text = "[ " + Mathf.Round(accumulatedDamage).ToString() + " ]";
-        damageNumberText.alpha = 255f;
+        damageNumberText.alpha = 1f;
+        foreach (Image bar in barImages)
+        {
+            var tempColor = bar.color;
+            tempColor.a = 1f;
+            bar.color = tempColor;
+        }
         alphaTimer = textTimeBeforeAlpha + textTimeToDissapear;
         SetProgress(progress, DefaultSpeed);
     }
 
     private void FixedUpdate()
     {
+        float distance = (player.position - this.transform.position).magnitude / 10f;
+        transform.localScale = new Vector3(distance,distance,distance);
+
         if (alphaTimer > 0f)
         {
             alphaTimer -= Time.fixedDeltaTime;
@@ -43,8 +62,13 @@ public class ProgressBar : MonoBehaviour
         if (alphaTimer < textTimeToDissapear)
         {
             damageNumberText.alpha = alphaTimer / textTimeToDissapear;
+            foreach (Image bar in barImages)
+            {
+                var tempColor = bar.color;
+                tempColor.a = alphaTimer / textTimeToDissapear;
+                bar.color = tempColor;
+            }
         }
-        
     }
 #endregion
 

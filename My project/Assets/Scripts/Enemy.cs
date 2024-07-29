@@ -62,6 +62,7 @@ public class Enemy : NetworkBehaviour
         CameraSetup mainCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CameraSetup>();
         healthBar.GetComponent<FaceCamera>().cam = mainCam.playerCam;
         healthBar.transform.SetParent(mainCam.canvas.transform);
+        healthBar.player = PlayerSetup.localPlayer.transform;
     }
 
     #region Damaged

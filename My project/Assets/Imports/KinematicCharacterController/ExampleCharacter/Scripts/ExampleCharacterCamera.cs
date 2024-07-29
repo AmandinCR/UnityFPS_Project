@@ -71,8 +71,6 @@ namespace KinematicCharacterController.Examples
             _targetVerticalAngle = 0f;
 
             PlanarDirection = Vector3.forward;
-
-            Application.targetFrameRate = 144;
         }
 
         // Set the transform that the camera will orbit around

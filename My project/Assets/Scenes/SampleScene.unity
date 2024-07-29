@@ -1511,7 +1511,7 @@ MonoBehaviour:
   syncInterval: 0
   enemyPrefab: {fileID: 550363922277451164, guid: 78a09a9b7883f2e45b948d68074a6450,
     type: 3}
-  enemyCount: 1
+  enemyCount: 5
   spawningTransforms:
   - {fileID: 620720616}
   - {fileID: 58091683}
@@ -2670,13 +2670,13 @@ PrefabInstance:
     - target: {fileID: 7275663483763344752, guid: 2dd9e260da9191a48891f2fae31c1e62,
         type: 3}
       propertyPath: spawnPrefabs.Array.size
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7275663483763344752, guid: 2dd9e260da9191a48891f2fae31c1e62,
         type: 3}
       propertyPath: spawnPrefabs.Array.data[0]
       value: 
-      objectReference: {fileID: 4511201160075575705, guid: 3dcf62ddf03d7f74eb1ac9320cf5cd4a,
+      objectReference: {fileID: 550363922277451164, guid: 78a09a9b7883f2e45b948d68074a6450,
         type: 3}
     - target: {fileID: 7275663483763344752, guid: 2dd9e260da9191a48891f2fae31c1e62,
         type: 3}
@@ -5100,7 +5100,7 @@ MonoBehaviour:
   syncInterval: 0
   enemyPrefab: {fileID: 550363922277451164, guid: 19986f1eaa5125d4793a7b3488ad28c7,
     type: 3}
-  enemyCount: 1
+  enemyCount: 5
   spawningTransforms:
   - {fileID: 27202514}
   - {fileID: 1985870}
@@ -6500,7 +6500,7 @@ MonoBehaviour:
   syncInterval: 0
   enemyPrefab: {fileID: 4511201160075575705, guid: c20f234fbf5e71546a132efc8a26c758,
     type: 3}
-  enemyCount: 1
+  enemyCount: 5
   spawningTransforms:
   - {fileID: 790570551}
   - {fileID: 1345687739}

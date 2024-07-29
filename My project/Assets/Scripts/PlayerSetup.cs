@@ -13,6 +13,7 @@ public class PlayerSetup : NetworkBehaviour
 
     private NetworkManager manager;
     public readonly static List<PlayerSetup> playerList = new List<PlayerSetup>();
+    public static PlayerSetup localPlayer;
     private GameObject cam;
     private TextMeshProUGUI healthText;
     private KinematicCharacterMotor motor;
@@ -21,6 +22,9 @@ public class PlayerSetup : NetworkBehaviour
 
     private void Start()
     {
+        if (isLocalPlayer)
+            localPlayer = this;
+        
         playerList.Add(this);
 
         // hopefully the layers don't change lol
