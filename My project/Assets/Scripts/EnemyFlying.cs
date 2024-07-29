@@ -115,6 +115,10 @@ public class EnemyFlying : NetworkBehaviour
                 rb.AddForce(flyDirection.normalized * patrolSpeed);
             }
         }
+        else
+        {
+            rb.velocity = Vector3.zero;
+        }
     }
 
 #region Dash
@@ -310,7 +314,7 @@ public class EnemyFlying : NetworkBehaviour
 
         // calculate new position near player
         Vector3 newPoint = playerPos + Random.onUnitSphere * radius; // should be change so that its on a unit circle instead? y=0?
-        Vector3 lineOfSight = newPoint - playerPos;
+        Vector3 lineOfSight = newPoint - transform.position;
 
         // check new position is not in a wall
         if (!Physics.CheckSphere(newPoint, checkTerrainRadius, flyLineOfSightMask))

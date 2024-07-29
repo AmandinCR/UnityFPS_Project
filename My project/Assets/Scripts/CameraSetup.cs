@@ -9,10 +9,4 @@ public class CameraSetup : MonoBehaviour
     public TextMeshProUGUI healthText;
     public Canvas canvas;
     public Camera playerCam;
-    public Camera uiCam;
-
-    private void Update()
-    {
-        uiCam.fieldOfView = playerCam.fieldOfView;
-    }
 }

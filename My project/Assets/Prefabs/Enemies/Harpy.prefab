@@ -372,6 +372,10 @@ MonoBehaviour:
   deathDelayTime: 1
   health: 100
   playerHeight: 1
+  blinking: 1
+  blinkIntensity: 2
+  blinkDuration: 0.1
+  blinkRenderer: {fileID: 8557647195609418724}
 --- !u!114 &2577367456029125124
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5314,6 +5318,12 @@ PrefabInstance:
 --- !u!4 &4765173260245928715 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1687100125723784854, guid: e0f9aead9312c1b4c9b0906160321c9f,
+    type: 3}
+  m_PrefabInstance: {fileID: 6145306231699307933}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &8557647195609418724 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2560962408051160697, guid: e0f9aead9312c1b4c9b0906160321c9f,
     type: 3}
   m_PrefabInstance: {fileID: 6145306231699307933}
   m_PrefabAsset: {fileID: 0}
