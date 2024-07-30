@@ -2990,6 +2990,10 @@ MonoBehaviour:
   deathDelayTime: 1
   health: 100
   playerHeight: 1
+  blinking: 0
+  blinkIntensity: 0
+  blinkDuration: 0
+  blinkRenderer: {fileID: 0}
 --- !u!114 &5809173049378822542
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5302,6 +5306,11 @@ PrefabInstance:
       propertyPath: Target
       value: 
       objectReference: {fileID: 3174852050791146588}
+    - target: {fileID: 1774453882387076700, guid: 196ce54122dde9748977961a8f7cb007,
+        type: 3}
+      propertyPath: Offset.y
+      value: 2.5
+      objectReference: {fileID: 0}
     - target: {fileID: 3731882731123125237, guid: 196ce54122dde9748977961a8f7cb007,
         type: 3}
       propertyPath: m_Name

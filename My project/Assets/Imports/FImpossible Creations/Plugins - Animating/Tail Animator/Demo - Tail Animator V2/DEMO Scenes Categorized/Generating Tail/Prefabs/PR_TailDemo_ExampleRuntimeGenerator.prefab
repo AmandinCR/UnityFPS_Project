@@ -25,12 +25,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1228663686444468}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &114519067381786234
 MonoBehaviour:
@@ -137,9 +138,7 @@ MonoBehaviour:
   CollidersSameLayer: 1
   CollidersAddRigidbody: 1
   RigidbodyMass: 1
-  CollidersLayer:
-    serializedVersion: 2
-    m_Bits: 0
+  CollidersLayer: 0
   UseSlitheryCurve: 0
   SlitheryCurve:
     serializedVersion: 2
@@ -327,7 +326,7 @@ MonoBehaviour:
     SyncWithAnimator: 0
     ReactionQuality: 0
     Smoothing: 0
-    MaxStretching: 0
+    StretchToTarget: 0
     StretchCurve:
       serializedVersion: 2
       m_Curve: []
@@ -369,7 +368,7 @@ MonoBehaviour:
   IKAnimatorBlend: 0.85
   IKReactionQuality: 2
   IKSmoothing: 0.2
-  IKMaxStretching: 0
+  IKStretchToTarget: 0
   IKStretchCurve:
     serializedVersion: 2
     m_Curve:
@@ -395,6 +394,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   IKLimitSettings: []
+  IKSelectiveChain: 0
   RotationOffset: {x: 0, y: 0, z: 0, w: 1}
   Curving: {x: 0, y: 0, z: 0, w: 1}
   UseCurvingCurve: 0
@@ -493,8 +493,8 @@ MonoBehaviour:
   _gizmosEditorEndPreview: {fileID: 0}
   _gizmospeep: {fileID: 0}
   _editor_Title: Tail Animator 2
-  _editor_IsInspectorViewingColliders: 1
-  _editor_IsInspectorViewingIncludedColliders: 1
+  _editor_IsInspectorViewingColliders: 0
+  _editor_IsInspectorViewingIncludedColliders: 0
   _editor_animatorViewedCounter: 1
   TailSegments: []
   GhostParent:
@@ -508,6 +508,8 @@ MonoBehaviour:
     BoneDimensionsScaled: {x: 0, y: 0, z: 0}
     BoneLengthScaled: 0
     InitialLocalPosition: {x: 0, y: 0, z: 0}
+    InitialLocalPositionInRoot: {x: 0, y: 0, z: 0}
+    InitialLocalRotationInRoot: {x: 0, y: 0, z: 0, w: 1}
     LocalOffset: {x: 0, y: 0, z: 0}
     InitialLocalRotation: {x: 0, y: 0, z: 0, w: 1}
     ColliderRadius: 1
@@ -526,6 +528,8 @@ MonoBehaviour:
     Slithery: 1
     Curling: 0.5
     Slippery: 1
+    LastKeyframeLocalRotation: {x: 0, y: 0, z: 0, w: 0}
+    LastKeyframeLocalPosition: {x: 0, y: 0, z: 0}
   GhostChild:
     ProceduralPosition: {x: 0, y: 0, z: 0}
     ProceduralPositionWeightBlended: {x: 0, y: 0, z: 0}
@@ -537,6 +541,8 @@ MonoBehaviour:
     BoneDimensionsScaled: {x: 0, y: 0, z: 0}
     BoneLengthScaled: 0
     InitialLocalPosition: {x: 0, y: 0, z: 0}
+    InitialLocalPositionInRoot: {x: 0, y: 0, z: 0}
+    InitialLocalRotationInRoot: {x: 0, y: 0, z: 0, w: 1}
     LocalOffset: {x: 0, y: 0, z: 0}
     InitialLocalRotation: {x: 0, y: 0, z: 0, w: 1}
     ColliderRadius: 1
@@ -555,6 +561,8 @@ MonoBehaviour:
     Slithery: 1
     Curling: 0.5
     Slippery: 1
+    LastKeyframeLocalRotation: {x: 0, y: 0, z: 0, w: 0}
+    LastKeyframeLocalPosition: {x: 0, y: 0, z: 0}
   UseMaxDistance: 0
   DistanceFrom: {fileID: 0}
   _distanceFrom_Auto: {fileID: 0}
@@ -612,19 +620,23 @@ MonoBehaviour:
   LimitAxisRange: {x: 0, y: 0}
   LimitSmoothing: 0.5
   MotionInfluence: 1
+  MotionInfluenceInY: 1
   IncludeParent: 1
   UnifyBendiness: 0
   ReactionSpeed: 0.9
   Sustain: 0
   RotationRelevancy: 1
   SmoothingStyle: 1
+  TimeScale: 1
   DeltaType: 4
   UpdateAsLast: 1
   DetectZeroKeyframes: 1
   StartAfterTPose: 1
   OptimizeWithMesh: {fileID: 0}
+  OptimizeWithMeshes: []
   TailAnimatorAmount: 1
   DetachChildren: 0
   Axis2D: 0
   Tangle: 0
   AnimateRoll: 0
+  OverrideKeyframeAnimation: 0

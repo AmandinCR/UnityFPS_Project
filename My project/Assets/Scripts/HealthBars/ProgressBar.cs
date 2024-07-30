@@ -78,6 +78,13 @@ public class ProgressBar : MonoBehaviour
 
     private void Start()
     {
+        foreach (Image bar in barImages)
+        {
+            var tempColor = bar.color;
+            tempColor.a = 0f;
+            bar.color = tempColor;
+        }
+
         if (SlowFillImage.type != Image.Type.Filled)
         {
             Debug.LogError($"{name}'s ProgressImage is not of type \"Filled\" so it cannot be used as a progress bar. Disabling this Progress Bar.");
