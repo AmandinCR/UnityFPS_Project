@@ -17,6 +17,9 @@ public class EnemyAttack : NetworkBehaviour
     private float attackTimer = 0f;
     private Enemy enemy;
 
+    [Header("Slash")]
+    [SerializeField] private ParticleSystem slashEffect;
+
     // RUNS ONLY ON SERVER
     [ServerCallback]
     private void Start()
@@ -81,6 +84,8 @@ public class EnemyAttack : NetworkBehaviour
     // RUNS ONLY ON CLIENTS
     private void Attack(GameObject target)
     {
+        slashEffect.Play();
+
         // TakeDamage only runs on the local player
         target.GetComponent<PlayerSetup>().TakeDamage(damage);
     }
