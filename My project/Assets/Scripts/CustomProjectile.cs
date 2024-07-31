@@ -12,6 +12,9 @@ public class CustomProjectile : MonoBehaviour
     [SerializeField] private LayerMask raycastLayerMask;
     [SerializeField] private bool fixedUpdateVisual = false;
     [SerializeField] private GameObject meshes;
+
+    [Header("Hit Effect")]
+    [SerializeField] private ParticleSystem hitEffect;
     
     [Header("Bullet Properties")]
     [SerializeField] private float selfDestructTime = 5f;
@@ -46,6 +49,9 @@ public class CustomProjectile : MonoBehaviour
     // Gets called when the projectile hits anything in raycastLayerMask
     private void OnHit()
     {
+        // play the on hit vfx
+        hitEffect.Play();
+
         CalculateDamage();
         CheckExplosion();
         if (projectileHit.transform.root.gameObject.layer == 8) // enemy layer

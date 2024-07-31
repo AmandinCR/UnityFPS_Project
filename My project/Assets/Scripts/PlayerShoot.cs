@@ -10,7 +10,7 @@ using UnityEngine;
 public class PlayerShoot : NetworkBehaviour
 {
     [SerializeField] private LayerMask aimLayerMask;
-    private Transform vfxStart;
+    [SerializeField] private Transform vfxStart;
     private Transform cam;
     [SerializeField] private float damage = 0f;
     [SerializeField] private float maxRaycastDistance = 100f;
@@ -23,11 +23,24 @@ public class PlayerShoot : NetworkBehaviour
     [SerializeField] private bool custom = false;
     [SerializeField] private GameObject customProjectilePrefab;
 
+    [Header("Muzzle")]
+    private ParticleSystem muzzleFlash;
+
     void Start()
     {
-        cam = GameObject.FindGameObjectWithTag("MainCamera").transform;
-        vfxStart = cam.GetComponent<CameraSetup>().vfxStart;
+        cam = Camera.main.transform;
         items = GetComponent<PlayerItems>();
+        muzzleFlash = vfxStart.GetComponent<ParticleSystem>();
+
+        // maybe should be in a different file...
+        // this is so that the gun rotates smoothly from camera perspective
+        if (isLocalPlayer)
+        {
+            Vector3 pos = vfxStart.localPosition;
+            vfxStart.SetParent(cam);
+            vfxStart.localPosition = pos;
+        }
+            
     }
 
     // RUNS ONLY ON LOCAL CLIENT
@@ -115,7 +128,13 @@ public class PlayerShoot : NetworkBehaviour
             projectile.isLocalPlayer = isLocalPlayer;
             projectile.owner = GetComponent<PlayerSetup>();
             projectile.SetProjectileData(damage, path, items, cameraShift);
+            PlayMuzzleFlash();
         }
+    }
+
+    private void PlayMuzzleFlash()
+    {
+        muzzleFlash.Play();
     }
 
     #endregion

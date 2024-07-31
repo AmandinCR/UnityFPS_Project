@@ -14,7 +14,7 @@ public class TiltHead : NetworkBehaviour
             this.enabled = false;
             return;
         }
-        cam = GameObject.FindGameObjectWithTag("MainCamera").transform;
+        cam = Camera.main.transform;
     }
 
     private void Update() 

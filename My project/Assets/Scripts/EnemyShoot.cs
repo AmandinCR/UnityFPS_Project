@@ -45,6 +45,9 @@ public class EnemyShoot : NetworkBehaviour
     private Quaternion shootRotation;
     private EnemyMotor motor;
 
+    [Header("MuzzleFlash")]
+    [SerializeField] private List<ParticleSystem> muzzleParticleSystems;
+
     // RUNS ONLY ON SERVER
     [ServerCallback]
     private void Start()
@@ -61,6 +64,13 @@ public class EnemyShoot : NetworkBehaviour
         currentAmmo = magSize;
         enemy = GetComponent<Enemy>();
         motor = GetComponent<EnemyMotor>();
+
+        // get reference to all the muzzle flash particle system vfx
+        // so that we don't have to add it all ourselves
+        foreach (Transform vfxStart in vfxStarts)
+        {
+            muzzleParticleSystems.Add(vfxStart.GetComponent<ParticleSystem>());
+        }
     }
 
     // RUNS ONLY ON SERVER
@@ -201,6 +211,7 @@ public class EnemyShoot : NetworkBehaviour
         {
             GameObject vfx = Instantiate(projectilePrefab, vfxStarts[i].position, shootRotation);
             vfx.GetComponent<EnemyProjectile>().SetProjectileData(shootDamage, spawnForce);
+            muzzleParticleSystems[i].Play();
         }
     }
     #endregion
