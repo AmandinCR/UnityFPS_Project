@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using KinematicCharacterController.Examples;
 using Mirror;
-using Mirror.Examples.Basic;
-using StinkySteak.SimulationTimer;
 using UnityEngine;
 
 public class PlayerShoot : NetworkBehaviour

@@ -18,7 +18,7 @@ public class SteamLobby : MonoBehaviour
     //Variables
     public ulong CurrentLobbyID;
     private const string HostAddressKey = "HostAddress";
-    private AuthorityNetworkManager manager;
+    private NetworkManager manager;
 
     //Gameobject
     public GameObject HostButton;
@@ -28,7 +28,7 @@ public class SteamLobby : MonoBehaviour
         if (!SteamManager.Initialized) {return; }
         //if (Instance == null) {Instance = this;}
 
-        manager = GetComponent<AuthorityNetworkManager>();
+        manager = GetComponent<NetworkManager>();
 
         LobbyCreated = Callback<LobbyCreated_t>.Create(OnLobbyCreated);
         JoinRequest = Callback<GameLobbyJoinRequested_t>.Create(OnJoinRequest);

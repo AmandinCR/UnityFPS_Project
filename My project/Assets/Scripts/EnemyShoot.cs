@@ -4,7 +4,6 @@ using UnityEngine;
 using Mirror;
 using System.Runtime.InteropServices;
 using KinematicCharacterController;
-using Mirror.Examples.Basic;
 
 public class EnemyShoot : NetworkBehaviour
 {

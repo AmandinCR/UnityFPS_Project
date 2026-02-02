@@ -16,9 +16,11 @@ public class PlayerSetup : NetworkBehaviour
     public static PlayerSetup localPlayer;
     private GameObject cam;
     private TextMeshProUGUI healthText;
-    private KinematicCharacterMotor motor;
     public Vector3 velocity;
     private Vector3 previousPosition;
+
+    //private SurfCharacter motor;
+    private KinematicCharacterMotor motor;
 
     private void Start()
     {
@@ -29,6 +31,8 @@ public class PlayerSetup : NetworkBehaviour
 
         // hopefully the layers don't change lol
         motor = GetComponent<KinematicCharacterMotor>();
+        //motor = GetComponent<SurfCharacter>();
+
         if (!isLocalPlayer) {
             motor.enabled = false;
             GetComponent<ExampleCharacterController>().enabled = false;
@@ -40,6 +44,7 @@ public class PlayerSetup : NetworkBehaviour
             GetComponent<ExampleCharacterController>().enabled = true;
             manager = NetworkManager.singleton;
             cam = GameObject.FindGameObjectWithTag("MainCamera");
+
             healthText = cam.GetComponent<CameraSetup>().healthText;
             healthText.text = health.ToString();
             this.gameObject.layer = 6;
@@ -117,7 +122,7 @@ public class PlayerSetup : NetworkBehaviour
 
         if (isLocalPlayer) {
             Vector3 spawn = manager.GetStartPosition().position;
-            GetComponent<KinematicCharacterMotor>().SetPosition(spawn);
+            transform.position = spawn;
         }
     }
 }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using Steamworks;
-using Mirror.Examples.MultipleMatch;
 
 public class MyNetworkManager : NetworkManager
 {
