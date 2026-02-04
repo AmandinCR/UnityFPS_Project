@@ -76,7 +76,7 @@ public class PlayerShootV2 : NetworkBehaviour
         {
             path = hit.point - pos;
         }
-        Debug.Log(hit.point);
+
 
         CmdShoot(pos, path);
         DoShoot(pos, path);

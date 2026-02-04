@@ -27,40 +27,13 @@ public class Enemy : NetworkBehaviour
     [HideInInspector] public float health;
     public float playerHeight = 1f;
 
-    [Header("Blinking")]
-    [SerializeField] private bool blinking = false;
-    [SerializeField] private float blinkIntensity;
-    [SerializeField] private float blinkDuration;
-    [SerializeField] private MeshRenderer blinkRenderer;
-    private float blinkTimer;
-
     private void Start()
     {
         currentState = EnemyState.Idle;
         currentAttackState = EnemyAttackState.Idle;
         health = maxHealth;
-        blinkTimer = 0f;
         SetupHealthBar();
         SetLayerAllChildren(this.transform);
-    }
-
-    private void Update()
-    {
-        if (blinking)
-        {
-            Blink();
-        }
-    }
-
-    private void Blink()
-    {
-        if (blinkTimer > 0)
-        {
-            blinkTimer -= Time.deltaTime;
-            float lerp = Mathf.Clamp01(blinkTimer / blinkDuration);
-            float intensity = lerp * blinkIntensity + 1.0f;
-            blinkRenderer.material.color = Color.white * intensity;
-        }
     }
 
     private void SetLayerAllChildren(Transform root)
@@ -124,8 +97,6 @@ public class Enemy : NetworkBehaviour
     {
         health -= damage;
         healthBar.SetDamage(damage, health / maxHealth);
-        if (blinking)
-            blinkTimer = blinkDuration;
 
         if (health <= 0.0f) 
         {
